@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
-
-import 'package:flutter_application/Pages/splashscreen.dart';
+import 'package:flutter_application/Controllers/Cubits/BottombarCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/LoginCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/MyjobCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/ProfileSettingCubit.dart';
+import 'package:flutter_application/View/Screens/Splashscreen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => PageCubit()),
+        BlocProvider(create: (context) => BottombarCubit()),
+        BlocProvider(create: (context) => MyjobCubit()),
+        BlocProvider(create: (context) => ProfilesettingCubit()),
+        BlocProvider(create: (context) => LoginCubit()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,16 +30,11 @@ class MyApp extends StatelessWidget {
     return AdaptiveTheme(
       light: ThemeData.light().copyWith(),
       dark: ThemeData.dark().copyWith(),
-      initial: AdaptiveThemeMode.dark,
+      initial: AdaptiveThemeMode.light,
       builder:
           (theme, darkTheme) => MaterialApp(
             title: 'Jobs',
             debugShowCheckedModeBanner: false,
-            // theme:AdaptiveTheme.of(context).mode !=null? ThemeData(
-            //   cardColor: AdaptiveTheme.of(context).mode ==
-            //                             AdaptiveThemeMode.light?lighttheme:darktheme,
-            //  // colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            // ):ThemeData(),
             home: Splashscreen(),
           ),
     );

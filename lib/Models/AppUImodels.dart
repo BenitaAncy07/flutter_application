@@ -29,3 +29,8 @@ class jobpreference_items {
   );
   String heading, subheading, textbox1, textbox2;
 }
+
+class Intropage_items {
+  String text, img;
+  Intropage_items(this.text, this.img);
+}
