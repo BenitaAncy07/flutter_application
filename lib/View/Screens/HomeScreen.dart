@@ -2,72 +2,109 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
+import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
+import 'package:flutter_application/Models/ApiModels.dart';
+import 'package:flutter_application/Models/CubitModels/HomeState.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/View/Typography/Loading.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class Home extends StatelessWidget {
-  Home({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   TextEditingController searchcontroller = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    homescreeninitial(context, _scrollController, searchcontroller.text);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        searchbarwidget(context),
-        Expanded(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height - 20,
-            width: double.infinity,
-            child: ListView.builder(
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width - 10,
-                      child: Card(
-                        color:
-                            AdaptiveTheme.of(context).mode ==
-                                    AdaptiveThemeMode.light
-                                ? lighttheme
-                                : darktheme,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: hexToColor(goldencolor),
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        elevation: 4,
-                        child: InkWell(
-                          onTap: () {
-                            jobviewaction(context);
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                contentshowwidget(context),
-                                rightsidebuttonwidget(context),
-                              ],
+    return BlocBuilder<JobCubit, JobState>(
+      builder: (context, state) {
+        if (state is JobLoading && state is! JobLoaded) {
+          return loading();
+        } else if (state is JobLoaded) {
+          return Column(
+            children: [
+              searchbarwidget(context),
+              Expanded(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height - 20,
+                  width: double.infinity,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount:
+                        state.jobs.length +
+                        (state.hasMore ? 1 : 0), // Add 1 for loader
+                    itemBuilder: (context, index) {
+                      if (index < state.jobs.length) {
+                        Jobmodel job = state.jobs[index];
+
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width - 10,
+                          child: Card(
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? lighttheme
+                                    : darktheme,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            elevation: 4,
+                            child: InkWell(
+                              onTap: () {
+                                jobviewaction(context, job.id);
+                              },
+                              child: IntrinsicHeight(
+                                child: Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      contentshowwidget(context, job),
+                                      rightsidebuttonwidget(context),
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ),
-      ],
+                        );
+                      } else {
+                        return loading();
+                      }
+                    },
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else if (state is JobError) {
+          return errorwidget(context, state.message);
+        } else {
+          return SizedBox.shrink(); // or a fallback widget
+        }
+      },
     );
   }
 
@@ -79,7 +116,7 @@ class Home extends StatelessWidget {
         controller: searchcontroller,
         cursorColor: hexToColor(goldencolor),
         style: TextStyle(
-          fontSize: searchtextsize,
+          fontSize: textsize3,
           fontFamily: headingfont,
           color:
               AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
@@ -89,7 +126,7 @@ class Home extends StatelessWidget {
         decoration: InputDecoration(
           hintText: searchhinttext,
           hintStyle: TextStyle(
-            fontSize: searchtextsize,
+            fontSize: textsize3,
             fontFamily: headingfont,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
@@ -108,11 +145,41 @@ class Home extends StatelessWidget {
           prefixIcon: Icon(
             searchicon,
             color: hexToColor(goldencolor),
-            size: buttoniconsize,
+            size: iconsize2,
+          ),
+          suffixIcon: Padding(
+            padding: EdgeInsets.only(right: 5),
+            child: InkWell(
+              onTap: () {
+                searchaction(context, searchcontroller.text);
+              },
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.06,
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: hexToColor(goldencolor),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  searchtext,
+                  style: TextStyle(
+                    fontSize: textsize3,
+                    color:
+                        AdaptiveTheme.of(context).mode ==
+                                AdaptiveThemeMode.light
+                            ? black
+                            : lighttheme,
+                    fontFamily: headingfont,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
-        onChanged: (query) {
-          searchaction();
+        onSubmitted: (value) {
+          searchaction(context, searchcontroller.text);
         },
       ),
     );
@@ -124,7 +191,7 @@ class Home extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         IconButton(
-          iconSize: buttoniconsize,
+          iconSize: iconsize2,
           onPressed: () {
             savejobaction(context);
           },
@@ -133,7 +200,7 @@ class Home extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(bottom: 80),
           child: IconButton(
-            iconSize: buttoniconsize,
+            iconSize: iconsize2,
             onPressed: () {
               blockaction(context);
             },
@@ -145,16 +212,16 @@ class Home extends StatelessWidget {
   }
 
   //===========================Content show widget========================
-  Widget contentshowwidget(BuildContext context) {
+  Widget contentshowwidget(BuildContext context, Jobmodel job) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.only(bottom: 10),
           child: Text(
-            'SENIOR FLUTTER DEVELOPER ',
+            job.jobtitle,
             style: TextStyle(
-              fontSize: homeheadingtextsize,
+              fontSize: textsize5,
               color:
                   AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                       ? black
@@ -166,9 +233,9 @@ class Home extends StatelessWidget {
         ),
 
         Text(
-          "Anjita It Solutions Pvt Ltd",
+          job.companyname,
           style: TextStyle(
-            fontSize: homesubheadingtextsize,
+            fontSize: textsize3,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                     ? black
@@ -177,9 +244,9 @@ class Home extends StatelessWidget {
           ),
         ),
         Text(
-          "Mumbai,Maharastra",
+          job.location,
           style: TextStyle(
-            fontSize: homesubheadingtextsize,
+            fontSize: textsize3,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                     ? black
@@ -187,23 +254,11 @@ class Home extends StatelessWidget {
             fontFamily: headingfont,
           ),
         ),
-        Text(
-          "Remote",
-          style: TextStyle(
-            fontSize: homesubheadingtextsize,
-            color:
-                AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                    ? black
-                    : lighttheme,
-            fontFamily: headingfont,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text(
-            "₹ 35,000 - ₹ 45,000 a month",
+        if (job.worklocation.isNotEmpty)
+          Text(
+            job.worklocation,
             style: TextStyle(
-              fontSize: homesubheadingtextsize,
+              fontSize: textsize3,
               color:
                   AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                       ? black
@@ -211,48 +266,72 @@ class Home extends StatelessWidget {
               fontFamily: headingfont,
             ),
           ),
-        ),
-        Row(
-          spacing: 10,
-          children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(8, 1, 8, 1),
-              decoration: BoxDecoration(
-                border: Border.all(color: hexToColor(goldencolor), width: 1),
-                borderRadius: BorderRadius.circular(3),
-              ),
+        if (job.payscale.isNotEmpty)
+          Text(
+            "$currencysymbol ${job.payscale} ${job.payperiod}",
+            style: TextStyle(
+              fontSize: textsize3,
+              color:
+                  AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                      ? black
+                      : lighttheme,
+              fontFamily: headingfont,
+            ),
+          ),
+        Padding(
+          padding: EdgeInsets.only(top: 10),
+          child: Row(
+            spacing: 10,
+            children: [
+              if (job.jobtype.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.fromLTRB(8, 1, 8, 1),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: hexToColor(goldencolor),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
 
-              child: Text(
-                "Full-time",
-                style: TextStyle(
-                  fontSize: homesubheadingtextsize,
-                  color:
-                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                          ? black
-                          : lighttheme,
-                  fontFamily: headingfont,
+                  child: Text(
+                    job.jobtype,
+                    style: TextStyle(
+                      fontSize: textsize3,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                      fontFamily: headingfont,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(8, 1, 8, 1),
-              decoration: BoxDecoration(
-                border: Border.all(color: hexToColor(goldencolor), width: 1),
-                borderRadius: BorderRadius.circular(3),
-              ),
-              child: Text(
-                "Day shift",
-                style: TextStyle(
-                  fontSize: homesubheadingtextsize,
-                  color:
-                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                          ? black
-                          : lighttheme,
-                  fontFamily: headingfont,
+              if (job.workshift.isNotEmpty)
+                Container(
+                  padding: EdgeInsets.fromLTRB(8, 1, 8, 1),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: hexToColor(goldencolor),
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                  child: Text(
+                    job.workshift,
+                    style: TextStyle(
+                      fontSize: textsize3,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                      fontFamily: headingfont,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );

@@ -1,13 +1,12 @@
 import 'package:flutter/Material.dart';
 
-double appbariconsize = 24,
-    bottombariconsize = 20,
-    buttoniconsize = 20,
-    buttoniconsize2 = 13,
-    buttoniconsize3 = 15,
-    buttoniconsize4 = 18,
-    buttoniconsize5 = 12,
-    homebottomsheeticonsize = 11;
+double iconsize1 = 24,
+    iconsize2 = 20,
+    iconsize3 = 18,
+    iconsize4 = 15,
+    iconsize5 = 13,
+    iconsize6 = 12,
+    iconsize7 = 11;
 
 IconData lighticon = Icons.light_mode_outlined,
     darkicon = Icons.dark_mode,

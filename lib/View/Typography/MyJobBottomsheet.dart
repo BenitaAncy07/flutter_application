@@ -2,12 +2,12 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
 import 'package:flutter_application/Models/AppUImodels.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
 
 class myjobBottomsheet {
   void mainwidget(
@@ -48,14 +48,14 @@ class myjobBottomsheet {
                               child: Icon(
                                 displayitem[i].icon,
                                 color: white,
-                                size: buttoniconsize3,
+                                size: iconsize4,
                               ),
                             ),
                           ),
                           Text(
                             displayitem[i].text,
                             style: TextStyle(
-                              fontSize: myjobheadingtextsize,
+                              fontSize: textsize5,
                               color:
                                   AdaptiveTheme.of(context).mode ==
                                           AdaptiveThemeMode.light
@@ -85,7 +85,7 @@ class myjobBottomsheet {
         Text(
           appliedheadingtext,
           style: TextStyle(
-            fontSize: myjobheadingtextsize,
+            fontSize: textsize5,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                     ? black
@@ -99,7 +99,7 @@ class myjobBottomsheet {
           children: [
             Icon(
               visibilityofficon,
-              size: buttoniconsize2,
+              size: iconsize5,
               color:
                   AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                       ? black.withOpacity(0.7)
@@ -109,7 +109,7 @@ class myjobBottomsheet {
             Text(
               appliedheadingtext2,
               style: TextStyle(
-                fontSize: myjobtextsize1,
+                fontSize: textsize3,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black.withOpacity(0.7)
@@ -133,7 +133,7 @@ class myjobBottomsheet {
           Text(
             moreoptionheading,
             style: TextStyle(
-              fontSize: myjobheadingtextsize,
+              fontSize: textsize5,
               color:
                   AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                       ? black
@@ -147,7 +147,7 @@ class myjobBottomsheet {
             closeaction(context);
           },
           icon: Icon(
-            size: appbariconsize,
+            size: iconsize1,
             closeicon,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light

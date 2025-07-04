@@ -2,21 +2,27 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application/Controllers/Cubits/ProfileSettingCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
-import 'package:flutter_application/Models/AppCubitmodels.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
 import 'package:flutter_application/Models/AppUImodels.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Profilebottomsheet {
-  void settingBottomSheet1(BuildContext context) {
+  void settingBottomSheet1(
+    BuildContext context,
+    String jobseekerid,
+    int openprofilevalue,
+  ) {
     showModalBottomSheet(
+      isDismissible: false,
       backgroundColor:
           AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
               ? lighttheme
@@ -27,33 +33,23 @@ class Profilebottomsheet {
         return BlocBuilder<ProfilesettingCubit, ProfileState>(
           builder: (context, statecontent) {
             return Container(
-              width: MediaQuery.of(context).size.width,
               padding: EdgeInsets.all(16.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text(
-                        profilesetting,
-                        style: TextStyle(
-                          fontSize: profiletextsize4,
-                          color:
-                              AdaptiveTheme.of(context).mode ==
-                                      AdaptiveThemeMode.light
-                                  ? black
-                                  : lighttheme,
-                          fontFamily: headingfont,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       IconButton(
                         onPressed: () {
                           closeaction(context);
+
+                          context.read<ProfilesettingCubit>().indexchange(
+                            openprofilevalue,
+                          );
                         },
                         icon: Icon(
-                          size: appbariconsize,
+                          size: iconsize2,
                           closeicon,
                           color:
                               AdaptiveTheme.of(context).mode ==
@@ -64,13 +60,27 @@ class Profilebottomsheet {
                       ),
                     ],
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        profilesetting.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: textsize5,
+                          color: hexToColor(goldencolor),
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                   Divider(thickness: 1, color: hexToColor(goldencolor)),
                   for (int i = 0; i < profilesettinglist.length; i++)
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                      padding: EdgeInsets.fromLTRB(0, 10, 0, 8),
                       child: Container(
                         alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width * 0.85,
+
                         padding: EdgeInsets.fromLTRB(8, 1, 8, 1),
                         decoration: BoxDecoration(
                           border: Border.all(
@@ -85,46 +95,62 @@ class Profilebottomsheet {
                             ListTile(
                               leading: Icon(
                                 profilesettinglist[i].icon,
-                                size: buttoniconsize4,
+                                size: iconsize3,
                                 color: hexToColor(goldencolor),
                               ),
 
                               title: Text(
                                 profilesettinglist[i].heading,
                                 style: TextStyle(
-                                  fontSize: buttoniconsize4,
-                                  color:
-                                      AdaptiveTheme.of(context).mode ==
-                                              AdaptiveThemeMode.light
-                                          ? black
-                                          : lighttheme,
+                                  fontSize: textsize5,
+                                  color: hexToColor(goldencolor),
+
                                   fontFamily: headingfont,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               trailing: Radio<int>(
                                 value: i,
+                                fillColor: MaterialStateProperty.resolveWith((
+                                  states,
+                                ) {
+                                  if (states.contains(MaterialState.selected)) {
+                                    return hexToColor(goldencolor);
+                                  }
+                                  return hexToColor(goldencolor);
+                                }),
                                 groupValue: statecontent.selectedindex,
                                 onChanged: (int? value) {
-                                  profilesettingchange(context, value!);
+                                  profilesettingchange(
+                                    context,
+                                    value!,
+                                    jobseekerid,
+                                  );
                                 },
                               ),
                             ),
-                            Wrap(
-                              children: [
-                                Text(
-                                  profilesettinglist[i].content,
-                                  style: TextStyle(
-                                    fontSize: profiletextsize2,
-                                    color:
-                                        AdaptiveTheme.of(context).mode ==
-                                                AdaptiveThemeMode.light
-                                            ? black
-                                            : lighttheme,
-                                    fontFamily: headingfont,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                right: 20,
+                                left: 20,
+                                bottom: 15,
+                              ),
+                              child: Wrap(
+                                children: [
+                                  Text(
+                                    profilesettinglist[i].content,
+                                    style: TextStyle(
+                                      fontSize: textsize2,
+                                      color:
+                                          AdaptiveTheme.of(context).mode ==
+                                                  AdaptiveThemeMode.light
+                                              ? black
+                                              : lighttheme,
+                                      fontFamily: headingfont,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -132,6 +158,39 @@ class Profilebottomsheet {
                     ),
 
                   Divider(thickness: 1, color: hexToColor(goldencolor)),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.85,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: hexToColor(goldencolor),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                      ),
+                      onPressed: () {
+                        saveprofiledata(
+                          context,
+                          profilesetting,
+                          jobseekerid,
+                          statecontent.selectedindex,
+                        );
+                      },
+                      child: Text(
+                        savebuttontext,
+                        style: TextStyle(
+                          fontSize: buttontextsize1,
+                          color:
+                              AdaptiveTheme.of(context).mode ==
+                                      AdaptiveThemeMode.light
+                                  ? black
+                                  : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             );
@@ -146,12 +205,18 @@ class Profilebottomsheet {
     BuildContext context,
     qualification_items item1,
     List contents,
-    List<String> dropdownitems,
     List starrequired,
+    String heading,
+    String jobseekerid,
   ) {
+    final _formKey1 = GlobalKey<FormState>();
+    final _formKey = GlobalKey<FormState>();
+    FocusNode box1Focus = FocusNode();
+    FocusNode box2Focus = FocusNode();
     TextEditingController textbox1controller = TextEditingController();
     TextEditingController textbox2controller = TextEditingController();
     showModalBottomSheet(
+      isDismissible: false,
       backgroundColor:
           AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
               ? lighttheme
@@ -160,33 +225,19 @@ class Profilebottomsheet {
       isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
-          width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text(
-                    item1.heading,
-                    style: TextStyle(
-                      fontSize: profiletextsize4,
-                      color:
-                          AdaptiveTheme.of(context).mode ==
-                                  AdaptiveThemeMode.light
-                              ? black
-                              : lighttheme,
-                      fontFamily: headingfont,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
                   IconButton(
                     onPressed: () {
                       closeaction(context);
                     },
                     icon: Icon(
-                      size: appbariconsize,
+                      size: iconsize2,
                       closeicon,
                       color:
                           AdaptiveTheme.of(context).mode ==
@@ -197,9 +248,24 @@ class Profilebottomsheet {
                   ),
                 ],
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    item1.heading.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: textsize5,
+                      color: hexToColor(goldencolor),
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
               Divider(thickness: 1, color: hexToColor(goldencolor)),
+
               Wrap(
-                spacing: 8.0, // Space between items
+                spacing: 8.0, // Space between items horizontally
                 runSpacing: 8.0, // Space between rows
                 children:
                     contents.map((item) {
@@ -210,28 +276,29 @@ class Profilebottomsheet {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
-                          spacing: 10,
-
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Expanded(
-                              child: Text(
-                                item,
-
-                                style: TextStyle(
-                                  fontSize: profiletextsize5,
-                                  color:
-                                      AdaptiveTheme.of(context).mode ==
-                                              AdaptiveThemeMode.light
-                                          ? black
-                                          : lighttheme,
-                                  fontFamily: headingfont,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            Text(
+                              item.split("~")[0],
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color:
+                                    AdaptiveTheme.of(context).mode ==
+                                            AdaptiveThemeMode.light
+                                        ? black
+                                        : lighttheme,
+                                fontFamily: headingfont,
                               ),
                             ),
+
                             IconButton(
                               onPressed: () {
-                                profiledetaildelete();
+                                profiledetaildelete(
+                                  context,
+                                  heading,
+                                  item.split("~")[1],
+                                  jobseekerid,
+                                );
                               },
                               icon: Icon(
                                 deleteicon,
@@ -240,7 +307,7 @@ class Profilebottomsheet {
                                             AdaptiveThemeMode.light
                                         ? black
                                         : lighttheme,
-                                size: buttoniconsize5,
+                                size: iconsize5,
                               ),
                             ),
                           ],
@@ -252,13 +319,12 @@ class Profilebottomsheet {
                 padding: EdgeInsets.only(top: 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
                     RichText(
                       text: TextSpan(
                         text: item1.textbox1,
                         style: TextStyle(
-                          fontSize: profiletextsize1,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
@@ -272,7 +338,7 @@ class Profilebottomsheet {
                             TextSpan(
                               text: ' *',
                               style: TextStyle(
-                                fontSize: profiletextsize2,
+                                fontSize: textsize3,
                                 color: red,
                                 fontFamily: headingfont,
                                 fontWeight: FontWeight.bold,
@@ -284,133 +350,116 @@ class Profilebottomsheet {
 
                     Container(
                       padding: EdgeInsets.all(10),
-                      child: TextField(
-                        controller: textbox1controller,
-                        cursorColor: hexToColor(goldencolor),
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          controller: textbox1controller,
+                          focusNode: box1Focus,
+                          onFieldSubmitted: (_) {
+                            FocusScope.of(context).requestFocus(box2Focus);
+                          },
+                          textInputAction: TextInputAction.next,
+                          cursorColor: hexToColor(goldencolor),
+                          style: TextStyle(
+                            fontSize: textsize3,
+                            fontFamily: headingfont,
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? black
+                                    : lighttheme,
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.0),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (starrequired[0] == 1 &&
+                                (value == null || value.isEmpty)) {
+                              return requiredfieldtext;
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+
+                    RichText(
+                      text: TextSpan(
+                        text: item1.textbox2,
                         style: TextStyle(
-                          fontSize: profiletextsize2,
-                          fontFamily: headingfont,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
                                   ? black
                                   : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
                         ),
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: hexToColor(goldencolor),
-                              width: 1.0,
+                        children: [
+                          if (starrequired[1] == 1)
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color: red,
+                                fontFamily: headingfont,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide(
-                              color: hexToColor(goldencolor),
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        onChanged: (query) {
-                          print("Search query: $query");
-                        },
+                        ],
                       ),
                     ),
-                    if (item1.textbox2.isNotEmpty)
-                      RichText(
-                        text: TextSpan(
-                          text: item1.textbox2,
-                          style: TextStyle(
-                            fontSize: profiletextsize1,
-                            color:
-                                AdaptiveTheme.of(context).mode ==
-                                        AdaptiveThemeMode.light
-                                    ? black
-                                    : lighttheme,
-                            fontFamily: headingfont,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          children: [
-                            if (starrequired[1] == 1)
-                              TextSpan(
-                                text: ' *',
-                                style: TextStyle(
-                                  fontSize: profiletextsize2,
-                                  color: red,
-                                  fontFamily: headingfont,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    if (dropdownitems.isEmpty && item1.textbox2.isNotEmpty)
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        child: TextField(
-                          controller: textbox2controller,
-                          cursorColor: hexToColor(goldencolor),
-                          style: TextStyle(
-                            fontSize: profiletextsize2,
-                            fontFamily: headingfont,
-                            color:
-                                AdaptiveTheme.of(context).mode ==
-                                        AdaptiveThemeMode.light
-                                    ? black
-                                    : lighttheme,
-                          ),
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: hexToColor(goldencolor),
-                                width: 1.0,
-                              ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(
-                                color: hexToColor(goldencolor),
-                                width: 1.0,
-                              ),
-                            ),
-                          ),
-                          onChanged: (query) {
-                            print("Search query: $query");
-                          },
-                        ),
-                      ),
-                    if (dropdownitems.isNotEmpty)
-                      Container(
-                        padding: EdgeInsets.all(10),
-                        child: DropdownButtonFormField<String>(
-                          value: "Beginner", // Default selected value
-                          iconEnabledColor: hexToColor(goldencolor),
 
-                          items:
-                              dropdownitems.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(
-                                    value,
-                                    style: TextStyle(
-                                      fontSize: profiletextsize2,
-                                      fontFamily: headingfont,
-                                      color:
-                                          AdaptiveTheme.of(context).mode ==
-                                                  AdaptiveThemeMode.light
-                                              ? black
-                                              : lighttheme,
-                                    ),
-                                  ),
-                                );
-                              }).toList(),
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              print("Selected: $newValue");
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Form(
+                        key: _formKey1,
+                        child: TextFormField(
+                          controller: textbox2controller,
+                          focusNode: box2Focus,
+                          onFieldSubmitted: (_) {
+                            if (_formKey.currentState!.validate() &&
+                                _formKey1.currentState!.validate()) {
+                              saveprofiledata(context, heading, jobseekerid, [
+                                textbox1controller.text,
+                                textbox2controller.text,
+                              ]);
                             }
                           },
+                          textInputAction: TextInputAction.done,
+                          cursorColor: hexToColor(goldencolor),
+                          style: TextStyle(
+                            fontSize: textsize3,
+                            fontFamily: headingfont,
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? black
+                                    : lighttheme,
+                          ),
                           decoration: InputDecoration(
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8),
@@ -426,9 +475,27 @@ class Profilebottomsheet {
                                 width: 1.0,
                               ),
                             ),
+
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.0),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.2),
+                            ),
                           ),
+                          validator: (value) {
+                            if (starrequired[1] == 1 &&
+                                (value == null || value.isEmpty)) {
+                              return requiredfieldtext;
+                            }
+
+                            return null;
+                          },
                         ),
                       ),
+                    ),
                   ],
                 ),
               ),
@@ -438,21 +505,22 @@ class Profilebottomsheet {
                 width: MediaQuery.of(context).size.width * 0.85,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: hexToColor(
-                      goldencolor,
-                    ), // Button background color
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 10,
-                    ), // Button padding
+                    backgroundColor: hexToColor(goldencolor),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
                   onPressed: () {
-                    saveprofiledata();
+                    if (_formKey.currentState!.validate() &&
+                        _formKey1.currentState!.validate()) {
+                      saveprofiledata(context, heading, jobseekerid, [
+                        textbox1controller.text,
+                        textbox2controller.text,
+                      ]);
+                    }
                   },
                   child: Text(
                     savebuttontext,
                     style: TextStyle(
-                      fontSize: profiletextsize2,
+                      fontSize: buttontextsize1,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -460,41 +528,6 @@ class Profilebottomsheet {
                               : lighttheme,
                       fontFamily: headingfont,
                       fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 10),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          AdaptiveTheme.of(context).mode ==
-                                  AdaptiveThemeMode.light
-                              ? lighttheme
-                              : darktheme,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ), // Button padding
-                    ),
-                    onPressed: () {
-                      profiledetaildelete();
-                    },
-                    child: Text(
-                      deletebuttontext,
-                      style: TextStyle(
-                        fontSize: profiletextsize2,
-                        color:
-                            AdaptiveTheme.of(context).mode ==
-                                    AdaptiveThemeMode.light
-                                ? black
-                                : lighttheme,
-                        fontFamily: headingfont,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ),
@@ -535,7 +568,7 @@ class Profilebottomsheet {
                   Text(
                     item1.heading,
                     style: TextStyle(
-                      fontSize: profiletextsize4,
+                      fontSize: textsize6,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -573,7 +606,7 @@ class Profilebottomsheet {
                           text: TextSpan(
                             text: item1.subheading,
                             style: TextStyle(
-                              fontSize: profiletextsize1,
+                              fontSize: textsize5,
                               color:
                                   AdaptiveTheme.of(context).mode ==
                                           AdaptiveThemeMode.light
@@ -591,7 +624,7 @@ class Profilebottomsheet {
                       text: TextSpan(
                         text: item1.textbox1,
                         style: TextStyle(
-                          fontSize: profiletextsize1,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
@@ -632,7 +665,7 @@ class Profilebottomsheet {
                                       child: Text(
                                         option,
                                         style: TextStyle(
-                                          fontSize: profiletextsize1,
+                                          fontSize: textsize5,
                                           color:
                                               AdaptiveTheme.of(context).mode ==
                                                       AdaptiveThemeMode.light
@@ -656,7 +689,7 @@ class Profilebottomsheet {
                           text: TextSpan(
                             text: item1.textbox2,
                             style: TextStyle(
-                              fontSize: profiletextsize1,
+                              fontSize: textsize5,
                               color:
                                   AdaptiveTheme.of(context).mode ==
                                           AdaptiveThemeMode.light
@@ -695,7 +728,7 @@ class Profilebottomsheet {
                                     child: Text(
                                       option,
                                       style: TextStyle(
-                                        fontSize: profiletextsize1,
+                                        fontSize: textsize5,
                                         color:
                                             AdaptiveTheme.of(context).mode ==
                                                     AdaptiveThemeMode.light
@@ -724,12 +757,12 @@ class Profilebottomsheet {
                           ), // Button padding
                         ),
                         onPressed: () {
-                          saveprofiledata();
+                          // saveprofiledata();
                         },
                         child: Text(
                           savebuttontext,
                           style: TextStyle(
-                            fontSize: profiletextsize2,
+                            fontSize: textsize3,
                             color:
                                 AdaptiveTheme.of(context).mode ==
                                         AdaptiveThemeMode.light
@@ -758,12 +791,12 @@ class Profilebottomsheet {
                             ), // Button padding
                           ),
                           onPressed: () {
-                            profiledetaildelete();
+                            //profiledetaildelete();
                           },
                           child: Text(
                             deletebuttontext,
                             style: TextStyle(
-                              fontSize: profiletextsize2,
+                              fontSize: textsize3,
                               color:
                                   AdaptiveTheme.of(context).mode ==
                                           AdaptiveThemeMode.light
@@ -814,7 +847,7 @@ class Profilebottomsheet {
                   Text(
                     item1.heading,
                     style: TextStyle(
-                      fontSize: profiletextsize4,
+                      fontSize: textsize6,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -850,7 +883,7 @@ class Profilebottomsheet {
                       text: TextSpan(
                         text: item1.subheading,
                         style: TextStyle(
-                          fontSize: profiletextsize1,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
@@ -883,7 +916,7 @@ class Profilebottomsheet {
                             Text(
                               "Not shown to employers",
                               style: TextStyle(
-                                fontSize: profiletextsize2,
+                                fontSize: textsize3,
                                 color:
                                     AdaptiveTheme.of(context).mode ==
                                             AdaptiveThemeMode.light
@@ -902,7 +935,7 @@ class Profilebottomsheet {
                       text: TextSpan(
                         text: item1.textbox1,
                         style: TextStyle(
-                          fontSize: profiletextsize1,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
@@ -921,7 +954,7 @@ class Profilebottomsheet {
                         controller: textbox1controller,
                         cursorColor: hexToColor(goldencolor),
                         style: TextStyle(
-                          fontSize: profiletextsize2,
+                          fontSize: textsize3,
                           fontFamily: headingfont,
                           color:
                               AdaptiveTheme.of(context).mode ==
@@ -955,7 +988,7 @@ class Profilebottomsheet {
                       text: TextSpan(
                         text: item1.textbox2,
                         style: TextStyle(
-                          fontSize: profiletextsize1,
+                          fontSize: textsize5,
                           color:
                               AdaptiveTheme.of(context).mode ==
                                       AdaptiveThemeMode.light
@@ -981,7 +1014,7 @@ class Profilebottomsheet {
                                 child: Text(
                                   value,
                                   style: TextStyle(
-                                    fontSize: profiletextsize2,
+                                    fontSize: textsize3,
                                     fontFamily: headingfont,
                                     color:
                                         AdaptiveTheme.of(context).mode ==
@@ -1033,12 +1066,12 @@ class Profilebottomsheet {
                     ), // Button padding
                   ),
                   onPressed: () {
-                    saveprofiledata();
+                    //saveprofiledata();
                   },
                   child: Text(
                     savebuttontext,
                     style: TextStyle(
-                      fontSize: profiletextsize2,
+                      fontSize: textsize3,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -1067,12 +1100,12 @@ class Profilebottomsheet {
                       ), // Button padding
                     ),
                     onPressed: () {
-                      profiledetaildelete();
+                      //  profiledetaildelete();
                     },
                     child: Text(
                       deletebuttontext,
                       style: TextStyle(
-                        fontSize: profiletextsize2,
+                        fontSize: textsize3,
                         color:
                             AdaptiveTheme.of(context).mode ==
                                     AdaptiveThemeMode.light
@@ -1083,6 +1116,759 @@ class Profilebottomsheet {
                       ),
                     ),
                   ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  //==========================================Bottomsheet 4====================================
+  void profile_bottomSheet4(
+    BuildContext context,
+    qualification_items item1,
+    List contents,
+    List starrequired,
+    String heading,
+    String jobseekerid,
+    List<String> dropdownitems,
+  ) {
+    final _formKey = GlobalKey<FormState>();
+    FocusNode box1Focus = FocusNode();
+    TextEditingController textbox1controller = TextEditingController();
+    TextEditingController textbox2controller = TextEditingController(
+      text: dropdownitems[0],
+    );
+    showModalBottomSheet(
+      isDismissible: false,
+      backgroundColor:
+          AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+              ? lighttheme
+              : darktheme,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      closeaction(context);
+                    },
+                    icon: Icon(
+                      size: iconsize2,
+                      closeicon,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    item1.heading.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: textsize5,
+                      color: hexToColor(goldencolor),
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: hexToColor(goldencolor)),
+              Wrap(
+                spacing: 8.0, // Space between items horizontally
+                runSpacing: 8.0, // Space between rows
+                children:
+                    contents.map((item) {
+                      return Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: hexToColor(goldencolor).withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              item.split("~")[0],
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color:
+                                    AdaptiveTheme.of(context).mode ==
+                                            AdaptiveThemeMode.light
+                                        ? black
+                                        : lighttheme,
+                                fontFamily: headingfont,
+                              ),
+                            ),
+
+                            IconButton(
+                              onPressed: () {
+                                profiledetaildelete(
+                                  context,
+                                  heading,
+                                  item.split("~")[1],
+                                  jobseekerid,
+                                );
+                              },
+                              icon: Icon(
+                                deleteicon,
+                                color:
+                                    AdaptiveTheme.of(context).mode ==
+                                            AdaptiveThemeMode.light
+                                        ? black
+                                        : lighttheme,
+                                size: iconsize5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: item1.textbox1,
+                        style: TextStyle(
+                          fontSize: textsize5,
+                          color:
+                              AdaptiveTheme.of(context).mode ==
+                                      AdaptiveThemeMode.light
+                                  ? black
+                                  : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          if (starrequired[0] == 1)
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color: red,
+                                fontFamily: headingfont,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          controller: textbox1controller,
+                          focusNode: box1Focus,
+                          textInputAction: TextInputAction.next,
+                          cursorColor: hexToColor(goldencolor),
+                          style: TextStyle(
+                            fontSize: textsize3,
+                            fontFamily: headingfont,
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? black
+                                    : lighttheme,
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.0),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (starrequired[0] == 1 &&
+                                (value == null || value.isEmpty)) {
+                              return requiredfieldtext;
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: item1.textbox2,
+                        style: TextStyle(
+                          fontSize: textsize5,
+                          color:
+                              AdaptiveTheme.of(context).mode ==
+                                      AdaptiveThemeMode.light
+                                  ? black
+                                  : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          if (starrequired[1] == 1)
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color: red,
+                                fontFamily: headingfont,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: DropdownButtonFormField<String>(
+                        value:
+                            textbox2controller.text, // Default selected value
+                        iconEnabledColor: hexToColor(goldencolor),
+
+                        items:
+                            dropdownitems.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                    fontSize: textsize3,
+                                    fontFamily: headingfont,
+                                    color:
+                                        AdaptiveTheme.of(context).mode ==
+                                                AdaptiveThemeMode.light
+                                            ? black
+                                            : lighttheme,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            textbox2controller.text = newValue;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: hexToColor(goldencolor),
+                              width: 1.0,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: hexToColor(goldencolor),
+                              width: 1.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Divider(thickness: 1, color: hexToColor(goldencolor)),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: hexToColor(goldencolor),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      saveprofiledata(context, heading, jobseekerid, [
+                        textbox1controller.text,
+                        textbox2controller.text,
+                      ]);
+                    }
+                  },
+                  child: Text(
+                    savebuttontext,
+                    style: TextStyle(
+                      fontSize: buttontextsize1,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void profile_bottomSheet5(
+    BuildContext context,
+    qualification_items item1,
+    List contents,
+    List starrequired,
+    String heading,
+    String jobseekerid,
+  ) {
+    final _formKey = GlobalKey<FormState>();
+    FocusNode box1Focus = FocusNode();
+
+    TextEditingController textbox1controller = TextEditingController();
+
+    showModalBottomSheet(
+      isDismissible: false,
+      backgroundColor:
+          AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+              ? lighttheme
+              : darktheme,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      closeaction(context);
+                    },
+                    icon: Icon(
+                      size: iconsize2,
+                      closeicon,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    item1.heading.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: textsize5,
+                      color: hexToColor(goldencolor),
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: hexToColor(goldencolor)),
+
+              Wrap(
+                spacing: 8.0, // Space between items horizontally
+                runSpacing: 8.0, // Space between rows
+                children:
+                    contents.map((item) {
+                      return Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: hexToColor(goldencolor).withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              item.split("~")[0],
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color:
+                                    AdaptiveTheme.of(context).mode ==
+                                            AdaptiveThemeMode.light
+                                        ? black
+                                        : lighttheme,
+                                fontFamily: headingfont,
+                              ),
+                            ),
+
+                            IconButton(
+                              onPressed: () {
+                                profiledetaildelete(
+                                  context,
+                                  heading,
+                                  item.split("~")[1],
+                                  jobseekerid,
+                                );
+                              },
+                              icon: Icon(
+                                deleteicon,
+                                color:
+                                    AdaptiveTheme.of(context).mode ==
+                                            AdaptiveThemeMode.light
+                                        ? black
+                                        : lighttheme,
+                                size: iconsize5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: item1.textbox1,
+                        style: TextStyle(
+                          fontSize: textsize5,
+                          color:
+                              AdaptiveTheme.of(context).mode ==
+                                      AdaptiveThemeMode.light
+                                  ? black
+                                  : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          if (starrequired[0] == 1)
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color: red,
+                                fontFamily: headingfont,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          controller: textbox1controller,
+                          focusNode: box1Focus,
+                          onFieldSubmitted: (_) {
+                            if (_formKey.currentState!.validate()) {
+                              saveprofiledata(
+                                context,
+                                heading,
+                                jobseekerid,
+                                textbox1controller.text,
+                              );
+                            }
+                          },
+                          textInputAction: TextInputAction.next,
+                          cursorColor: hexToColor(goldencolor),
+                          style: TextStyle(
+                            fontSize: textsize3,
+                            fontFamily: headingfont,
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? black
+                                    : lighttheme,
+                          ),
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(
+                                color: hexToColor(goldencolor),
+                                width: 1.0,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.0),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide(color: red, width: 1.2),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (starrequired[0] == 1 &&
+                                (value == null || value.isEmpty)) {
+                              return requiredfieldtext;
+                            }
+
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Divider(thickness: 1, color: hexToColor(goldencolor)),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.85,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: hexToColor(goldencolor),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  ),
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      saveprofiledata(
+                        context,
+                        heading,
+                        jobseekerid,
+                        textbox1controller.text,
+                      );
+                    }
+                  },
+                  child: Text(
+                    savebuttontext,
+                    style: TextStyle(
+                      fontSize: buttontextsize1,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void profile_bottomSheet6(
+    BuildContext context,
+    qualification_items item1,
+    List contents,
+    List starrequired,
+    String heading,
+    String jobseekerid,
+    List<String> dropdownitems,
+  ) {
+    TextEditingController textbox2controller = TextEditingController(
+      text: dropdownitems[0],
+    );
+    showModalBottomSheet(
+      isDismissible: false,
+      backgroundColor:
+          AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+              ? lighttheme
+              : darktheme,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      closeaction(context);
+                    },
+                    icon: Icon(
+                      size: iconsize2,
+                      closeicon,
+                      color:
+                          AdaptiveTheme.of(context).mode ==
+                                  AdaptiveThemeMode.light
+                              ? black
+                              : lighttheme,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    item1.heading.toUpperCase(),
+                    style: TextStyle(
+                      fontSize: textsize5,
+                      color: hexToColor(goldencolor),
+                      fontFamily: headingfont,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              Divider(thickness: 1, color: hexToColor(goldencolor)),
+
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RichText(
+                      text: TextSpan(
+                        text: item1.textbox1,
+                        style: TextStyle(
+                          fontSize: textsize5,
+                          color:
+                              AdaptiveTheme.of(context).mode ==
+                                      AdaptiveThemeMode.light
+                                  ? black
+                                  : lighttheme,
+                          fontFamily: headingfont,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        children: [
+                          if (starrequired[0] == 1)
+                            TextSpan(
+                              text: ' *',
+                              style: TextStyle(
+                                fontSize: textsize3,
+                                color: red,
+                                fontFamily: headingfont,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Wrap(
+                        children:
+                            dropdownitems.map((option) {
+                              return Row(
+                                spacing: 10,
+
+                                children: [
+                                  Checkbox(
+                                    activeColor: hexToColor(goldencolor),
+                                    value: contents.contains(option),
+                                    onChanged: (bool? value) {
+                                      // if (value == true) {
+                                      //   selectedOptions.add(option);
+                                      // } else {
+                                      //   selectedOptions.remove(option);
+                                      // }
+                                    },
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0,
+                                      ),
+                                      child: Text(
+                                        option,
+                                        style: TextStyle(
+                                          fontSize: textsize5,
+                                          color:
+                                              AdaptiveTheme.of(context).mode ==
+                                                      AdaptiveThemeMode.light
+                                                  ? black
+                                                  : lighttheme,
+                                          fontFamily: headingfont,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }).toList(),
+                      ),
+                    ),
+
+                    Divider(thickness: 1, color: hexToColor(goldencolor)),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: hexToColor(goldencolor),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
+                        ),
+                        onPressed: () {
+                          saveprofiledata(
+                            context,
+                            heading,
+                            jobseekerid,
+                            textbox2controller.text,
+                          );
+                        },
+                        child: Text(
+                          savebuttontext,
+                          style: TextStyle(
+                            fontSize: buttontextsize1,
+                            color:
+                                AdaptiveTheme.of(context).mode ==
+                                        AdaptiveThemeMode.light
+                                    ? black
+                                    : lighttheme,
+                            fontFamily: headingfont,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

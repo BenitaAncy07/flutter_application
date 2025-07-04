@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Imagecontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
 
 class NoInternet extends StatelessWidget {
   const NoInternet({super.key});
@@ -20,7 +20,7 @@ class NoInternet extends StatelessWidget {
             child: Text(
               nointernet_heading,
               style: TextStyle(
-                fontSize: myjobheadingtextsize,
+                fontSize: textsize5,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black
@@ -35,7 +35,7 @@ class NoInternet extends StatelessWidget {
             child: Text(
               nointernet_content,
               style: TextStyle(
-                fontSize: myjobpagesize,
+                fontSize: textsize2,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black

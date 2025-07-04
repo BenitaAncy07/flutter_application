@@ -5,20 +5,20 @@ import 'package:flutter/Material.dart';
 import 'package:flutter_application/Controllers/Cubits/MyjobCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
 import 'package:flutter_application/View/Helpers/Imagecontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MyJobs extends StatelessWidget {
   MyJobs({super.key});
 
   List<String> optioncount = [
-    "10", "10", //"20",
-    "10",
+    "0", "0", //"20",
+    "0",
   ];
 
   @override
@@ -41,7 +41,7 @@ class MyJobs extends StatelessWidget {
   //================================header widget=====================
   Widget headerwidget(BuildContext context, int selectedindex) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.07,
+      height: MediaQuery.of(context).size.height * 0.08,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -59,7 +59,7 @@ class MyJobs extends StatelessWidget {
                   Text(
                     optioncount[index],
                     style: TextStyle(
-                      fontSize: myjobpagesize,
+                      fontSize: textsize2,
                       color:
                           index == selectedindex
                               ? hexToColor(goldencolor)
@@ -75,7 +75,7 @@ class MyJobs extends StatelessWidget {
                   Text(
                     MyJoboptions[index],
                     style: TextStyle(
-                      fontSize: myjobpagesize,
+                      fontSize: textsize2,
                       color:
                           index == selectedindex
                               ? hexToColor(goldencolor)
@@ -104,61 +104,63 @@ class MyJobs extends StatelessWidget {
   //=============================Empty widget========================
   Widget emptycontentdisplay(BuildContext context, int selectedindex) {
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(myjobnocontent_img[selectedindex]),
-          Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Text(
-              MyJobnocontent_text[selectedindex],
-              style: TextStyle(
-                fontSize: myjobheadingtextsize,
-                color:
-                    AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                        ? black
-                        : lighttheme,
-                fontFamily: headingfont,
-                fontWeight: FontWeight.bold,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(myjobnocontent_img[selectedindex]),
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Text(
+                MyJobnocontent_text[selectedindex],
+                style: TextStyle(
+                  fontSize: textsize5,
+                  color:
+                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                          ? black
+                          : lighttheme,
+                  fontFamily: headingfont,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(bottom: 10, top: 10),
-            child: Text(
-              MyJobnocontent_text1[selectedindex],
-              style: TextStyle(
-                fontSize: myjobpagesize,
-                color:
-                    AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                        ? black
-                        : lighttheme,
-                fontFamily: headingfont,
+            Padding(
+              padding: EdgeInsets.only(bottom: 10, top: 10),
+              child: Text(
+                MyJobnocontent_text1[selectedindex],
+                style: TextStyle(
+                  fontSize: textsize2,
+                  color:
+                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                          ? black
+                          : lighttheme,
+                  fontFamily: headingfont,
+                ),
               ),
             ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: hexToColor(goldencolor),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            onPressed: () {
-              findjobaction(context);
-            },
-            child: Text(
-              findjobsbuttontext,
-              style: TextStyle(
-                fontSize: myjobtextsize1,
-                color:
-                    AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                        ? black
-                        : lighttheme,
-                fontFamily: headingfont,
-                fontWeight: FontWeight.bold,
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: hexToColor(goldencolor),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              onPressed: () {
+                findjobaction(context);
+              },
+              child: Text(
+                findjobsbuttontext,
+                style: TextStyle(
+                  fontSize: textsize3,
+                  color:
+                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                          ? black
+                          : lighttheme,
+                  fontFamily: headingfont,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -192,7 +194,7 @@ class MyJobs extends StatelessWidget {
                     elevation: 4,
                     child: InkWell(
                       onTap: () {
-                        jobviewaction(context);
+                        // jobviewaction(context);
                       },
                       child: Padding(
                         padding: EdgeInsets.all(16),
@@ -214,7 +216,7 @@ class MyJobs extends StatelessWidget {
                                   child: Text(
                                     "Application viewed",
                                     style: TextStyle(
-                                      fontSize: myjobtextsize2,
+                                      fontSize: textsize1,
                                       color:
                                           AdaptiveTheme.of(context).mode ==
                                                   AdaptiveThemeMode.light
@@ -226,7 +228,7 @@ class MyJobs extends StatelessWidget {
                                 ),
 
                                 IconButton(
-                                  iconSize: buttoniconsize,
+                                  iconSize: iconsize2,
                                   onPressed: () {
                                     moreaction(
                                       context,
@@ -245,7 +247,7 @@ class MyJobs extends StatelessWidget {
                               child: Text(
                                 'SENIOR FLUTTER DEVELOPER ',
                                 style: TextStyle(
-                                  fontSize: myjobheadingtextsize,
+                                  fontSize: textsize5,
                                   color:
                                       AdaptiveTheme.of(context).mode ==
                                               AdaptiveThemeMode.light
@@ -259,7 +261,7 @@ class MyJobs extends StatelessWidget {
                             Text(
                               "Anjita It Solutions Pvt Ltd",
                               style: TextStyle(
-                                fontSize: myjobtextsize1,
+                                fontSize: textsize3,
                                 color:
                                     AdaptiveTheme.of(context).mode ==
                                             AdaptiveThemeMode.light
@@ -272,7 +274,7 @@ class MyJobs extends StatelessWidget {
                             Text(
                               "Mumbai,Maharastra",
                               style: TextStyle(
-                                fontSize: myjobtextsize1,
+                                fontSize: textsize3,
                                 color:
                                     AdaptiveTheme.of(context).mode ==
                                             AdaptiveThemeMode.light
@@ -284,7 +286,7 @@ class MyJobs extends StatelessWidget {
                             Text(
                               "Remote",
                               style: TextStyle(
-                                fontSize: myjobtextsize1,
+                                fontSize: textsize3,
                                 color:
                                     AdaptiveTheme.of(context).mode ==
                                             AdaptiveThemeMode.light
@@ -296,7 +298,7 @@ class MyJobs extends StatelessWidget {
                             Text(
                               "Applied on 10 Apr",
                               style: TextStyle(
-                                fontSize: myjobtextsize1,
+                                fontSize: textsize3,
                                 color:
                                     AdaptiveTheme.of(context).mode ==
                                             AdaptiveThemeMode.light
@@ -328,12 +330,12 @@ class MyJobs extends StatelessWidget {
                                                   AdaptiveThemeMode.light
                                               ? black
                                               : lighttheme,
-                                      size: buttoniconsize2,
+                                      size: iconsize5,
                                     ),
                                     Text(
                                       "Job closed or expired",
                                       style: TextStyle(
-                                        fontSize: myjobpagesize,
+                                        fontSize: textsize2,
                                         color:
                                             AdaptiveTheme.of(context).mode ==
                                                     AdaptiveThemeMode.light
@@ -380,7 +382,7 @@ class MyJobs extends StatelessWidget {
               ? applynowbuttontext
               : updatestatusbuttontext,
           style: TextStyle(
-            fontSize: myjobheadingtextsize,
+            fontSize: textsize5,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                     ? black

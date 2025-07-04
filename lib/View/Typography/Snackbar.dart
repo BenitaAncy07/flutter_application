@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
 
 //==========================Simple snackbar===================
 void simplesnackbar(BuildContext context, String msg) {
@@ -88,7 +88,7 @@ undosnackbar(BuildContext context, String msg) {
           children: [
             Padding(
               padding: EdgeInsets.only(right: 10),
-              child: Icon(erroricon, size: appbariconsize),
+              child: Icon(erroricon, size: iconsize1),
             ),
             Expanded(child: Text(msg, style: TextStyle(color: black))),
             TextButton(

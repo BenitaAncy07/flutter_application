@@ -9,10 +9,17 @@ class Update_Status_items {
   IconData icon;
 }
 
+class Profile_page_items1 {
+  Profile_page_items1(this.heading, this.content, this.icon);
+  IconData icon;
+  String heading, content;
+}
+
 class Profile_page_items {
   Profile_page_items(this.heading, this.content, this.icon);
   IconData icon;
-  String heading, content;
+  String heading;
+  List<String> content;
 }
 
 class qualification_items {

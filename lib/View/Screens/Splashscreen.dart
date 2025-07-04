@@ -17,7 +17,7 @@ class _SplashscreenState extends State<Splashscreen> {
   @override
   void initState() {
     super.initState();
-    themecheck(context);
+    initialcheck(context);
   }
 
   @override

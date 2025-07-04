@@ -4,8 +4,10 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
-import 'package:flutter_application/Models/AppCubitmodels.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
+import 'package:flutter_application/View/Screens/LoginScreen.dart';
+import 'package:flutter_application/View/Screens/RegisterScreen.dart';
 import 'package:flutter_application/View/Typography/Appbar.dart';
 import 'package:flutter_application/View/Typography/Bottombar.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
@@ -49,7 +51,9 @@ class MainScreenState extends State<MainScreen> {
                   : darktheme,
           appBar:
               // state.internetstatus == "online" &&
-              state.page["page"] != introScreen
+              (state.page["page"] == homeScreen ||
+                      state.page["page"] == myjobsScreen ||
+                      state.page["page"] == profileScreen)
                   ? PreferredSize(
                     preferredSize: Size.fromHeight(kToolbarHeight),
                     child: Appbar1(),
@@ -57,7 +61,11 @@ class MainScreenState extends State<MainScreen> {
                   : null,
           bottomNavigationBar:
               // state.internetstatus == "online" &&
-              state.page["page"] != introScreen ? Bottombar1() : null,
+              (state.page["page"] == homeScreen ||
+                      state.page["page"] == myjobsScreen ||
+                      state.page["page"] == profileScreen)
+                  ? Bottombar1()
+                  : null,
           body: PopScope(
             canPop: false, // Prevents the route from being popped automatically
             onPopInvokedWithResult: (didPop, result) async {
@@ -68,6 +76,10 @@ class MainScreenState extends State<MainScreen> {
                 //     ?
                 state.page["page"] == introScreen
                     ? Introscreen()
+                    : state.page["page"] == loginScreen
+                    ? Loginscreen()
+                    : state.page["page"] == registerScreen
+                    ? Registerscreen()
                     : state.page["page"] == homeScreen
                     ? Home()
                     : state.page["page"] == myjobsScreen

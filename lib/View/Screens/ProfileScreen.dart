@@ -2,12 +2,15 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
-import 'package:flutter_application/Controllers/Cubits/ProfileSettingCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
-import 'package:flutter_application/Models/AppCubitmodels.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
+import 'package:flutter_application/Models/ApiModels.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
+import 'package:flutter_application/Models/CubitModels/ProfileState.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/View/Typography/Loading.dart';
 import 'package:flutter_application/View/Typography/ProfileBottomsheet.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
 import 'package:flutter_application/Models/AppUImodels.dart';
@@ -16,136 +19,184 @@ import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Profilescreen extends StatelessWidget {
-  Profilescreen({super.key});
-
-  List<Profile_page_items>
-  Qualifications = [
-    Profile_page_items(workexpereiencetext, "Fresher", workexperienceicon),
-    Profile_page_items(educationtext, "Bachelor's degree", educationicon),
-    Profile_page_items(
-      skilltext,
-      "Flutter, dart, Babylon js, Mysql,ios development,json",
-      skillicon,
-    ),
-    Profile_page_items(
-      languagestext,
-      "English - Fluent, Tamil - Native",
-      languageicon,
-    ),
-  ],
-  jobpreference = [
-    Profile_page_items(jobtitletext, "Flutter Developer", workexperienceicon),
-    Profile_page_items(jobtypetext, "Full-time", jobtypeicon),
-    Profile_page_items(
-      workscheduletext,
-      "Days - Monday to Friday, Day shift",
-      scheduleicon,
-    ),
-    Profile_page_items(minimumpaytext, "₹ 25,000  a month", payicon),
-    Profile_page_items(worklocationtext, "Remote, Hybrid work", locationicon),
-  ];
+  const Profilescreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfilesettingCubit, ProfileState>(
       builder: (context, statecontent) {
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              headerwidget(context),
-              profilesettingwidget(context, statecontent.selectedindex),
-              resumewidget(context),
-              Padding(
-                padding: EdgeInsets.only(bottom: 10),
-                child: Row(
-                  spacing: 10,
+        return BlocBuilder<Profiledetailcubit, Profiledetailstate>(
+          builder: (context, state) {
+            if (state is showdetail) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(),
-                    Text(
-                      aboutyoutext,
-                      style: TextStyle(
-                        fontSize: profiletextsize1,
-                        color:
-                            AdaptiveTheme.of(context).mode ==
-                                    AdaptiveThemeMode.light
-                                ? black
-                                : lighttheme,
-                        fontFamily: headingfont,
-                        fontWeight: FontWeight.bold,
+                    headerwidget(context, state.value),
+                    profilesettingwidget(
+                      context,
+                      statecontent.selectedindex,
+                      state.value.id,
+                      state.value.openprofile,
+                    ),
+                    resumewidget(context, state.value),
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        spacing: 10,
+                        children: [
+                          SizedBox(),
+                          Text(
+                            aboutyoutext,
+                            style: TextStyle(
+                              fontSize: textsize5,
+                              color:
+                                  AdaptiveTheme.of(context).mode ==
+                                          AdaptiveThemeMode.light
+                                      ? black
+                                      : lighttheme,
+                              fontFamily: headingfont,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    aboutyouwidget(
+                      context,
+                      statecontent.showqualificationcontent,
+                      qualificationtext,
+                      qualificationsubtext,
+                      [
+                        Profile_page_items(
+                          workexpereiencetext,
+                          state.value.qualification.split('#'),
+                          workexperienceicon,
+                        ),
+                        Profile_page_items(
+                          educationtext,
+                          state.value.education.split('#'),
+                          educationicon,
+                        ),
+                        Profile_page_items(
+                          skilltext,
+                          state.value.skills.split('#'),
+                          skillicon,
+                        ),
+                        Profile_page_items(
+                          languagestext,
+                          state.value.languages.split('#'),
+                          languageicon,
+                        ),
+                      ],
+                      state.value.id,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                      ),
+                      child: Divider(
+                        thickness: 1,
+                        color: hexToColor(goldencolor),
+                      ),
+                    ),
+                    aboutyouwidget(
+                      context,
+                      statecontent.showpreferencecontent,
+                      jobpreferencetext,
+                      jobpreferencesubtext,
+                      [
+                        Profile_page_items(
+                          jobtitlestext,
+                          state.value.desired_jobtitle.split('#'),
+                          workexperienceicon,
+                        ),
+                        Profile_page_items(
+                          jobtypetext,
+                          state.value.jobtype.split('#'),
+                          jobtypeicon,
+                        ),
+                        Profile_page_items(
+                          workscheduletext,
+                          ("${state.value.shift}#${state.value.schedule}")
+                              .split('#'),
+                          scheduleicon,
+                        ),
+                        Profile_page_items(minimumpaytext, [
+                          "$currencysymbol ${state.value.minimum_basepay} ${state.value.pay_period}",
+                        ], payicon),
+                        Profile_page_items(
+                          worklocationtext,
+                          state.value.worklocation.split('#'),
+                          locationicon,
+                        ),
+                      ],
+                      state.value.id,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                      ),
+                      child: Divider(
+                        thickness: 1,
+                        color: hexToColor(goldencolor),
+                      ),
+                    ),
+                    availablewidget(
+                      context,
+                      statecontent.showavailablecontent,
+                      state.value.available_immediately,
+                      state.value.id,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                      ),
+                      child: Divider(
+                        thickness: 1,
+                        color: hexToColor(goldencolor),
+                      ),
+                    ),
+                    buttonwidget(context, state.value.mail),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: 10,
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                      ),
+                      child: Divider(
+                        thickness: 1,
+                        color: hexToColor(goldencolor),
                       ),
                     ),
                   ],
                 ),
-              ),
-              aboutyouwidget(
-                context,
-                statecontent.showqualificationcontent,
-                qualificationtext,
-                qualificationsubtext,
-                Qualifications,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  top: 0,
-                  right: 10,
-                  bottom: 0,
-                ),
-                child: Divider(thickness: 1, color: hexToColor(goldencolor)),
-              ),
-              aboutyouwidget(
-                context,
-                statecontent.showpreferencecontent,
-                jobpreferencetext,
-                jobpreferencesubtext,
-                jobpreference,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  top: 0,
-                  right: 10,
-                  bottom: 0,
-                ),
-                child: Divider(thickness: 1, color: hexToColor(goldencolor)),
-              ),
-              availablewidget(
-                context,
-                statecontent.showavailablecontent,
-                readytoworktext,
-                readytoworksubtext,
-                readytoworktext2,
-                statecontent.availabletowork,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  top: 0,
-                  right: 10,
-                  bottom: 0,
-                ),
-                child: Divider(thickness: 1, color: hexToColor(goldencolor)),
-              ),
-              buttonwidget(context),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 10,
-                  top: 0,
-                  right: 10,
-                  bottom: 0,
-                ),
-                child: Divider(thickness: 1, color: hexToColor(goldencolor)),
-              ),
-            ],
-          ),
+              );
+            } else if (state is profiledetailError) {
+              return errorwidget(context, state.message);
+            } else if (state is profiledetailLoading && state is! showdetail) {
+              return loading();
+            } else {
+              return SizedBox.shrink();
+            }
+          },
         );
       },
     );
   }
 
   //============================Header widget===============================
-  headerwidget(BuildContext context) {
+  headerwidget(BuildContext context, profiledatamodel value) {
     return Column(
       children: [
         Padding(
@@ -154,9 +205,9 @@ class Profilescreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "RUBANCY",
+                value.name.toUpperCase(),
                 style: TextStyle(
-                  fontSize: profiletextsize1,
+                  fontSize: textsize5,
                   color:
                       AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                           ? black
@@ -175,15 +226,11 @@ class Profilescreen extends StatelessWidget {
             spacing: 10,
             children: [
               SizedBox(),
-              Icon(
-                mailicon,
-                size: buttoniconsize3,
-                color: hexToColor(goldencolor),
-              ),
+              Icon(mailicon, size: iconsize4, color: hexToColor(goldencolor)),
               Text(
-                "rubancy@gmail.com",
+                value.mail,
                 style: TextStyle(
-                  fontSize: profiletextsize2,
+                  fontSize: textsize3,
                   color:
                       AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                           ? black
@@ -201,15 +248,11 @@ class Profilescreen extends StatelessWidget {
             spacing: 10,
             children: [
               SizedBox(),
-              Icon(
-                phoneicon,
-                size: buttoniconsize3,
-                color: hexToColor(goldencolor),
-              ),
+              Icon(phoneicon, size: iconsize4, color: hexToColor(goldencolor)),
               Text(
-                "9876543210",
+                value.phoneno,
                 style: TextStyle(
-                  fontSize: profiletextsize2,
+                  fontSize: textsize3,
                   color:
                       AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                           ? black
@@ -225,15 +268,11 @@ class Profilescreen extends StatelessWidget {
           spacing: 10,
           children: [
             SizedBox(),
-            Icon(
-              locationicon,
-              size: buttoniconsize3,
-              color: hexToColor(goldencolor),
-            ),
+            Icon(locationicon, size: iconsize4, color: hexToColor(goldencolor)),
             Text(
-              "Nagercoil, Tamil Nadu, IN",
+              value.location,
               style: TextStyle(
-                fontSize: profiletextsize2,
+                fontSize: textsize3,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black
@@ -248,10 +287,19 @@ class Profilescreen extends StatelessWidget {
   }
 
   //========================Setting widget==================
-  Widget profilesettingwidget(BuildContext context, int selectedindex) {
+  Widget profilesettingwidget(
+    BuildContext context,
+    int selectedindex,
+    String jobseekerid,
+    int openprofileindex,
+  ) {
     return InkWell(
       onTap: () {
-        Profilebottomsheet().settingBottomSheet1(context);
+        Profilebottomsheet().settingBottomSheet1(
+          context,
+          jobseekerid,
+          openprofileindex,
+        );
       },
       child: Padding(
         padding: EdgeInsets.all(10),
@@ -271,12 +319,12 @@ class Profilescreen extends StatelessWidget {
                   Icon(
                     profilesettinglist[selectedindex].icon,
                     color: hexToColor(goldencolor),
-                    size: buttoniconsize2,
+                    size: iconsize5,
                   ),
                   Text(
                     profilesettinglist[selectedindex].heading,
                     style: TextStyle(
-                      fontSize: profiletextsize2,
+                      fontSize: textsize3,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -290,7 +338,7 @@ class Profilescreen extends StatelessWidget {
               Icon(
                 dropdownicon,
                 color: hexToColor(goldencolor),
-                size: buttoniconsize4,
+                size: iconsize3,
               ),
             ],
           ),
@@ -300,7 +348,7 @@ class Profilescreen extends StatelessWidget {
   }
 
   //=================================Resume Widget=====================
-  Widget resumewidget(BuildContext context) {
+  Widget resumewidget(BuildContext context, profiledatamodel value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -311,7 +359,7 @@ class Profilescreen extends StatelessWidget {
             Text(
               resumetext,
               style: TextStyle(
-                fontSize: profiletextsize1,
+                fontSize: textsize5,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black
@@ -340,14 +388,15 @@ class Profilescreen extends StatelessWidget {
                     Icon(
                       resumeicon,
                       color: hexToColor(goldencolor),
-                      size: buttoniconsize2,
+                      size: iconsize5,
                     ),
                     Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Resume.pdf",
+                          value.resume,
                           style: TextStyle(
-                            fontSize: profiletextsize2,
+                            fontSize: textsize3,
                             color:
                                 AdaptiveTheme.of(context).mode ==
                                         AdaptiveThemeMode.light
@@ -358,9 +407,9 @@ class Profilescreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "Added on 9 Apr 2025",
+                          datetext + value.resumedate,
                           style: TextStyle(
-                            fontSize: profiletextsize2,
+                            fontSize: textsize3,
                             color:
                                 AdaptiveTheme.of(context).mode ==
                                         AdaptiveThemeMode.light
@@ -387,13 +436,13 @@ class Profilescreen extends StatelessWidget {
                             children: [
                               Icon(
                                 resumesettinglist[i].icon,
-                                size: buttoniconsize4,
+                                size: iconsize3,
                                 color: hexToColor(goldencolor),
                               ),
                               Text(
                                 resumesettinglist[i].content,
                                 style: TextStyle(
-                                  fontSize: profiletextsize2,
+                                  fontSize: textsize3,
                                   color:
                                       AdaptiveTheme.of(context).mode ==
                                               AdaptiveThemeMode.light
@@ -410,7 +459,7 @@ class Profilescreen extends StatelessWidget {
                   child: Icon(
                     moreiconhorizontal,
                     color: hexToColor(goldencolor),
-                    size: buttoniconsize4,
+                    size: iconsize3,
                   ),
                 ),
               ],
@@ -428,6 +477,7 @@ class Profilescreen extends StatelessWidget {
     String heading,
     String subheading,
     List<Profile_page_items> contentlist,
+    String jobseekerid,
   ) {
     return Padding(
       padding: EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
@@ -463,12 +513,12 @@ class Profilescreen extends StatelessWidget {
                               Icon(
                                 contentlist[i].icon,
                                 color: hexToColor(goldencolor),
-                                size: buttoniconsize2,
+                                size: iconsize5,
                               ),
                               Text(
                                 contentlist[i].heading,
                                 style: TextStyle(
-                                  fontSize: buttoniconsize2,
+                                  fontSize: iconsize5,
                                   color:
                                       AdaptiveTheme.of(context).mode ==
                                               AdaptiveThemeMode.light
@@ -482,28 +532,60 @@ class Profilescreen extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
-                              profileeditaction(context, heading, i);
+                              profileeditaction(
+                                context,
+                                contentlist[i].heading,
+                                contentlist[i].content,
+                                jobseekerid,
+                              );
                             },
                             icon: Icon(
                               editicon,
                               color: hexToColor(goldencolor),
-                              size: buttoniconsize2,
+                              size: iconsize5,
                             ),
                           ),
                         ],
                       ),
-
-                      Text(
-                        contentlist[i].content,
-                        style: TextStyle(
-                          fontSize: profiletextsize2,
-                          color:
-                              AdaptiveTheme.of(context).mode ==
-                                      AdaptiveThemeMode.light
-                                  ? black.withOpacity(0.7)
-                                  : lighttheme.withOpacity(0.7),
-                          fontFamily: headingfont,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (
+                            int j = 0;
+                            j < contentlist[i].content.length;
+                            j++
+                          )
+                            Padding(
+                              padding: EdgeInsets.only(left: 40),
+                              child: RichText(
+                                text: TextSpan(
+                                  text: bulletsymbol,
+                                  style: TextStyle(
+                                    fontSize: textsize3,
+                                    color: hexToColor(goldencolor),
+                                    fontFamily: headingfont,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          contentlist[i].content[j].split(
+                                            "~",
+                                          )[0],
+                                      style: TextStyle(
+                                        fontSize: textsize3,
+                                        color:
+                                            AdaptiveTheme.of(context).mode ==
+                                                    AdaptiveThemeMode.light
+                                                ? black.withOpacity(0.7)
+                                                : lighttheme.withOpacity(0.7),
+                                        fontFamily: headingfont,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
@@ -530,7 +612,7 @@ class Profilescreen extends StatelessWidget {
             Text(
               heading,
               style: TextStyle(
-                fontSize: profiletextsize2,
+                fontSize: textsize3,
                 color:
                     AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                         ? black
@@ -546,7 +628,7 @@ class Profilescreen extends StatelessWidget {
               icon: Icon(
                 showcontent ? dropdownicon : hiddencontenticon,
                 color: hexToColor(goldencolor),
-                size: buttoniconsize4,
+                size: iconsize3,
               ),
             ),
           ],
@@ -554,7 +636,7 @@ class Profilescreen extends StatelessWidget {
         Text(
           subheading,
           style: TextStyle(
-            fontSize: profiletextsize5,
+            fontSize: textsize1,
             color:
                 AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                     ? black.withOpacity(0.7)
@@ -570,10 +652,8 @@ class Profilescreen extends StatelessWidget {
   Widget availablewidget(
     BuildContext context,
     bool showcontent,
-    String heading,
-    String subheading,
-    String contenttext,
     bool available,
+    String jobseekerid,
   ) {
     return Padding(
       padding: EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
@@ -587,7 +667,12 @@ class Profilescreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            aboutyouheader(context, heading, subheading, showcontent),
+            aboutyouheader(
+              context,
+              readytoworktext,
+              readytoworksubtext,
+              showcontent,
+            ),
             if (showcontent)
               Row(
                 children: [
@@ -615,22 +700,20 @@ class Profilescreen extends StatelessWidget {
                                   AdaptiveThemeMode.light
                               ? lighttheme
                               : darktheme,
-                      activeTrackColor: hexToColor(
-                        goldencolor,
-                      ), // Amber background when ON
+                      activeTrackColor: hexToColor(goldencolor),
                       inactiveTrackColor: hexToColor(
                         goldencolor,
                       ).withOpacity(0.3),
                       value: available,
                       onChanged: (bool newValue) {
-                        availablecheckaction(context, newValue);
+                        availablecheckaction(context, jobseekerid, newValue);
                       },
                     ),
                   ),
                   Text(
-                    contenttext,
+                    readytoworkcontenttext,
                     style: TextStyle(
-                      fontSize: profiletextsize2,
+                      fontSize: textsize3,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -648,10 +731,10 @@ class Profilescreen extends StatelessWidget {
   }
 
   //=================================Button widget========================
-  Widget buttonwidget(BuildContext context) {
+  Widget buttonwidget(BuildContext context, String mail) {
     return InkWell(
       onTap: () {
-        signoutaction();
+        signoutaction(context);
       },
       child: Padding(
         padding: EdgeInsets.only(left: 10, top: 0, right: 10, bottom: 0),
@@ -672,7 +755,7 @@ class Profilescreen extends StatelessWidget {
                   Text(
                     signoutbuttontext,
                     style: TextStyle(
-                      fontSize: profiletextsize2,
+                      fontSize: textsize3,
                       color:
                           AdaptiveTheme.of(context).mode ==
                                   AdaptiveThemeMode.light
@@ -685,9 +768,9 @@ class Profilescreen extends StatelessWidget {
                 ],
               ),
               Text(
-                "Rubancy@gmail.com",
+                mail,
                 style: TextStyle(
-                  fontSize: profiletextsize5,
+                  fontSize: textsize1,
                   color:
                       AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                           ? black.withOpacity(0.7)

@@ -27,11 +27,11 @@ class Bottombar1 extends StatelessWidget {
                     ? lighttheme
                     : darktheme,
             selectedLabelStyle: TextStyle(
-              fontSize: bottombarlabelsize,
+              fontSize: textsize1,
               fontFamily: headingfont,
             ),
             unselectedLabelStyle: TextStyle(
-              fontSize: bottombarlabelsize,
+              fontSize: textsize1,
               color:
                   AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
                       ? black

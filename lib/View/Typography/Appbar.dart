@@ -4,9 +4,9 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
-import 'package:flutter_application/Models/AppCubitmodels.dart';
-import 'package:flutter_application/Models/Appconstants.dart';
-import 'package:flutter_application/View/Helpers/UIconstants.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
+import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
@@ -34,7 +34,7 @@ class Appbar1 extends StatelessWidget {
                 ? myjob_appbarheading
                 : profile_appbarheading,
             style: TextStyle(
-              fontSize: appbartextsize,
+              fontSize: textsize5,
               color: hexToColor(goldencolor),
               fontFamily: headingfont,
               fontWeight: FontWeight.bold,
@@ -51,7 +51,7 @@ class Appbar1 extends StatelessWidget {
                     ? lighticon
                     : darkicon,
                 color: hexToColor(goldencolor),
-                size: appbariconsize,
+                size: iconsize1,
               ),
             ),
           ],
