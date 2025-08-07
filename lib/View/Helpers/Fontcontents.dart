@@ -1,6 +1,6 @@
 String headingfont = "Lato";
 
-double buttontextsize1 = 15;
+double buttontextsize1 = 15, buttontextsize2 = 14;
 
 double textsize1 = 11,
     textsize2 = 12,

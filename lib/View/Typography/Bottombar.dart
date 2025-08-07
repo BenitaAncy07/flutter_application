@@ -1,6 +1,9 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/Controllers/Cubits/LoginCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
 import 'package:flutter_application/View/Helpers/Bottombarcontents.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
@@ -12,42 +15,49 @@ class Bottombar1 extends StatelessWidget {
   const Bottombar1({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BottombarCubit, int>(
-      builder: (context, selectedindex) {
-        return Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(color: hexToColor(goldencolor), width: 1),
-            ),
-          ),
-          child: BottomNavigationBar(
-            items: bottombaritem,
-            backgroundColor:
-                AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                    ? lighttheme
-                    : darktheme,
-            selectedLabelStyle: TextStyle(
-              fontSize: textsize1,
-              fontFamily: headingfont,
-            ),
-            unselectedLabelStyle: TextStyle(
-              fontSize: textsize1,
-              color:
-                  AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                      ? black
-                      : lighttheme,
-              fontFamily: headingfont,
-            ),
-            selectedItemColor: hexToColor(goldencolor),
-            unselectedItemColor:
-                AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                    ? black
-                    : lighttheme,
-            currentIndex: selectedindex,
-            onTap: (index1) {
-              bottombaraction(index1, context);
-            },
-          ),
+    return BlocBuilder<LoginCubit, LoginState>(
+      builder: (context, loginstate) {
+        return BlocBuilder<BottombarCubit, int>(
+          builder: (context, selectedindex) {
+            return Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: hexToColor(goldencolor), width: 1),
+                ),
+              ),
+              child: BottomNavigationBar(
+                items:
+                    loginstate.person == employertext
+                        ? bottombaritememployer
+                        : bottombaritemjobseeker,
+                backgroundColor:
+                    AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                        ? lighttheme
+                        : darktheme,
+                selectedLabelStyle: TextStyle(
+                  fontSize: textsize1,
+                  fontFamily: headingfont,
+                ),
+                unselectedLabelStyle: TextStyle(
+                  fontSize: textsize1,
+                  color:
+                      AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                          ? black
+                          : lighttheme,
+                  fontFamily: headingfont,
+                ),
+                selectedItemColor: hexToColor(goldencolor),
+                unselectedItemColor:
+                    AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                        ? black
+                        : lighttheme,
+                currentIndex: selectedindex,
+                onTap: (index1) {
+                  bottombaraction(index1, context);
+                },
+              ),
+            );
+          },
         );
       },
     );

@@ -1,4 +1,5 @@
-String url = "";
+String url = "http://localhost/Joblist_flutter/";
+String resumeurl = "Resumes/", apiurl = "APi/MobileApp.php";
 
 String getalljobs = "getalljobs",
     getlogin = "getlogin",
@@ -16,8 +17,13 @@ String getalljobs = "getalljobs",
     insertlanguage = 'insertlanguage',
     deletejobtitle = "deletejobtitle",
     insertjobtitle = "insertjobtitle",
-    insertjobtype = "insertjobtype",
-    deletejobtype = "deletejobtype";
+    updatejobtype = "updatejobtype",
+    updateworklocation = "updateworklocation",
+    updateminimumpay = "updateminimumpay",
+    updateschedule = "updateschedule",
+    updateresume = 'updateresume',
+    insertjobseeker = "insertjobseeker",
+    insertemployer = "insertemployer";
 
 String jobidtext = "jobid",
     jobseekeridtext = 'jobseekerid',
@@ -33,4 +39,10 @@ String jobidtext = "jobid",
     expyearapitext = "years_of_experience",
     languageapitext = "language",
     proficiencyapitext = 'proficiency',
-    jobtypeapitext = "jobtype";
+    jobtypeapitext = "jobtype",
+    worklocationapitext = "worklocation",
+    minimumbasepayapitext = "minimum_basepay",
+    payperiodapitext = "pay_period",
+    scheduleapitext = "workschedule",
+    shiftapitext = "workshift",
+    resumeapitext = "resume";

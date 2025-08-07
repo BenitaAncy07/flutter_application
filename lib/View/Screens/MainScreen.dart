@@ -2,6 +2,8 @@
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
+import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/Controllers/Cubits/LoginCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
@@ -11,10 +13,10 @@ import 'package:flutter_application/View/Screens/RegisterScreen.dart';
 import 'package:flutter_application/View/Typography/Appbar.dart';
 import 'package:flutter_application/View/Typography/Bottombar.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
-import 'package:flutter_application/View/Screens/HomeScreen.dart';
+import 'package:flutter_application/View/Screens/Jobseeker/HomeScreen.dart';
 import 'package:flutter_application/View/Screens/IntroScreen.dart';
-import 'package:flutter_application/View/Screens/MyJobScreen.dart';
-import 'package:flutter_application/View/Screens/ProfileScreen.dart';
+import 'package:flutter_application/View/Screens/Jobseeker/MyJobScreen.dart';
+import 'package:flutter_application/View/Screens/Jobseeker/ProfileScreen.dart';
 import 'package:flutter_application/View/Typography/No_Internet.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -44,51 +46,57 @@ class MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<PageCubit, PageState>(
       builder: (context, state) {
-        return Scaffold(
-          backgroundColor:
-              AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
-                  ? lighttheme
-                  : darktheme,
-          appBar:
-              // state.internetstatus == "online" &&
-              (state.page["page"] == homeScreen ||
-                      state.page["page"] == myjobsScreen ||
-                      state.page["page"] == profileScreen)
-                  ? PreferredSize(
-                    preferredSize: Size.fromHeight(kToolbarHeight),
-                    child: Appbar1(),
-                  )
-                  : null,
-          bottomNavigationBar:
-              // state.internetstatus == "online" &&
-              (state.page["page"] == homeScreen ||
-                      state.page["page"] == myjobsScreen ||
-                      state.page["page"] == profileScreen)
-                  ? Bottombar1()
-                  : null,
-          body: PopScope(
-            canPop: false, // Prevents the route from being popped automatically
-            onPopInvokedWithResult: (didPop, result) async {
-              await backbuttonaction(context, state.page["page"], didPop);
-            },
-            child:
-                // state.internetstatus == "online"
-                //     ?
-                state.page["page"] == introScreen
-                    ? Introscreen()
-                    : state.page["page"] == loginScreen
-                    ? Loginscreen()
-                    : state.page["page"] == registerScreen
-                    ? Registerscreen()
-                    : state.page["page"] == homeScreen
-                    ? Home()
-                    : state.page["page"] == myjobsScreen
-                    ? MyJobs()
-                    : state.page["page"] == profileScreen
-                    ? Profilescreen()
-                    : Container(),
-            //: NoInternet(),
-          ),
+        return BlocBuilder<LoginCubit, LoginState>(
+          builder: (context, loginstate) {
+            return Scaffold(
+              backgroundColor:
+                  AdaptiveTheme.of(context).mode == AdaptiveThemeMode.light
+                      ? lighttheme
+                      : darktheme,
+              appBar:
+                  state.internetstatus == onlinetext &&
+                          (state.page[pagetext] == homeScreen ||
+                              state.page[pagetext] == myjobsScreen ||
+                              state.page[pagetext] == profileScreen)
+                      ? PreferredSize(
+                        preferredSize: Size.fromHeight(kToolbarHeight),
+                        child: appbar2(context),
+                      )
+                      : null,
+              bottomNavigationBar:
+                  state.internetstatus == onlinetext &&
+                          (state.page[pagetext] == homeScreen ||
+                              state.page[pagetext] == myjobsScreen ||
+                              state.page[pagetext] == profileScreen)
+                      ? Bottombar1()
+                      : null,
+              body: PopScope(
+                canPop:
+                    false, // Prevents the route from being popped automatically
+                onPopInvokedWithResult: (didPop, result) async {
+                  await backbuttonaction(context, state.page[pagetext], didPop);
+                },
+                child:
+                    state.internetstatus == onlinetext
+                        ? state.page[pagetext] == introScreen
+                            ? Introscreen()
+                            : state.page[pagetext] == loginScreen
+                            ? Loginscreen()
+                            : state.page[pagetext] == registerScreen
+                            ? Registerscreen()
+                            : loginstate.person == employertext
+                            ? Container() //admin
+                            : state.page[pagetext] == homeScreen
+                            ? Home()
+                            : state.page[pagetext] == myjobsScreen
+                            ? MyJobs()
+                            : state.page[pagetext] == profileScreen
+                            ? Profilescreen()
+                            : Container()
+                        : NoInternet(),
+              ),
+            );
+          },
         );
       },
     );
@@ -101,10 +109,10 @@ class MainScreenState extends State<MainScreen> {
     ) {
       switch (status) {
         case InternetStatus.connected:
-          context.read<PageCubit>().internetcheck("online");
+          context.read<PageCubit>().internetcheck(onlinetext);
           break;
         case InternetStatus.disconnected:
-          context.read<PageCubit>().internetcheck("offline");
+          context.read<PageCubit>().internetcheck(offlinetext);
           break;
       }
     });

@@ -1,5 +1,5 @@
 // ignore_for_file: must_be_immutable, non_constant_identifier_names
-
+import 'package:file_picker/file_picker.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
@@ -184,7 +184,8 @@ class Profilescreen extends StatelessWidget {
               );
             } else if (state is profiledetailError) {
               return errorwidget(context, state.message);
-            } else if (state is profiledetailLoading && state is! showdetail) {
+            }
+            if (state is profiledetailLoading) {
               return loading();
             } else {
               return SizedBox.shrink();
@@ -348,7 +349,7 @@ class Profilescreen extends StatelessWidget {
   }
 
   //=================================Resume Widget=====================
-  Widget resumewidget(BuildContext context, profiledatamodel value) {
+  Widget resumewidget(BuildContext context, profiledatamodel statevalue) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -394,7 +395,7 @@ class Profilescreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          value.resume,
+                          statevalue.resume,
                           style: TextStyle(
                             fontSize: textsize3,
                             color:
@@ -407,7 +408,7 @@ class Profilescreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          datetext + value.resumedate,
+                          datetext + statevalue.resumedate,
                           style: TextStyle(
                             fontSize: textsize3,
                             color:
@@ -424,7 +425,12 @@ class Profilescreen extends StatelessWidget {
                 ),
                 PopupMenuButton<String>(
                   onSelected: (String value) {
-                    resumeaction(value);
+                    resumeaction(
+                      value,
+                      context,
+                      statevalue.id,
+                      statevalue.resume,
+                    );
                   },
                   itemBuilder: (BuildContext context) {
                     return [

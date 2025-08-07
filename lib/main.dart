@@ -7,6 +7,7 @@ import 'package:flutter_application/Controllers/Cubits/MyjobCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/RegisterCubit.dart';
 import 'package:flutter_application/View/Screens/Splashscreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +15,7 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
+        BlocProvider(create: (context) => RegisterCubit()),
         BlocProvider(create: (context) => PageCubit()),
         BlocProvider(create: (context) => BottombarCubit()),
         BlocProvider(create: (context) => MyjobCubit()),

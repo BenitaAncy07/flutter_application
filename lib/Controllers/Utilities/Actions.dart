@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application/Controllers/Constants/ApiConstants.dart';
+import 'package:flutter_application/Controllers/Constants/GlobalConstants.dart';
 import 'package:flutter_application/Controllers/Cubits/BottombarCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/JobDetailCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/LoginCubit.dart';
@@ -10,15 +12,17 @@ import 'package:flutter_application/Controllers/Cubits/MyjobCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/RegisterCubit.dart';
+import 'package:flutter_application/Controllers/Utilities/FileActions.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
 import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
 import 'package:flutter_application/Models/AppUImodels.dart';
 import 'package:flutter_application/Models/CubitModels/HomeState.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
 import 'package:flutter_application/View/Helpers/Iconcontents.dart';
 import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
-import 'package:flutter_application/View/Typography/Loading.dart';
 import 'package:flutter_application/View/Typography/ProfileBottomsheet.dart';
 import 'package:flutter_application/View/Typography/JobdetailBottomsheet.dart';
 import 'package:flutter_application/View/Typography/MyJobBottomsheet.dart';
@@ -90,8 +94,9 @@ backbuttonaction(BuildContext context, String page, bool didPop) async {
     return;
   } else if (page == registerScreen) {
     context.read<PageCubit>().nextPage(introScreen);
+    context.read<RegisterCubit>().reset();
     return;
-  } else {
+  } else if (!kIsWeb) {
     if (didPop) {
       return;
     }
@@ -165,10 +170,10 @@ selectwhoaction(BuildContext context, int index) {
   context.read<LoginCubit>().personselected(index);
 }
 
-//============================skip action===========================
-skipaction(BuildContext context) {
-  context.read<PageCubit>().nextPage(homeScreen);
-}
+// //============================skip action===========================
+// skipaction(BuildContext context) {
+//   context.read<PageCubit>().nextPage(homeScreen);
+// }
 
 //============================create account action=================
 createaccountaction(BuildContext context) {
@@ -179,9 +184,6 @@ createaccountaction(BuildContext context) {
 signinaction(BuildContext context) {
   context.read<PageCubit>().nextPage(loginScreen);
 }
-
-//===========================Block action=========================
-blockaction(BuildContext context) {}
 
 //===========================Save job action=====================
 savejobaction(BuildContext context) {
@@ -264,7 +266,25 @@ unarchiveaction() {}
 withdrawaction() {}
 
 //=============================Resume action==================
-resumeaction(String value) {}
+resumeaction(
+  String value,
+  BuildContext context,
+  String jobseekerid,
+  String filename,
+) async {
+  if (value == replacetext) {
+    Map items = await pickFileaction(context);
+    context.read<Profiledetailcubit>().fileupload(
+      context,
+      items[filebytetext],
+      items[filenametext],
+      jobseekerid,
+    );
+  } else if (value == deletetext) {
+  } else if (value == downloadtext) {
+    await downloadaction(context, jobseekerid, filename);
+  }
+}
 
 //============================Profile Setting Change============
 profilesettingchange(BuildContext context, int value, String jobseekerid) {
@@ -335,56 +355,44 @@ profileeditaction(
   } else if (check == jobtypetext) {
     Profilebottomsheet().profile_bottomSheet6(
       context,
-      qualification_items(jobtypetext, desiredjobtypetext, ""),
+      qualification_items(check, desiredjobtypetext, ""),
       contentdata,
-      [1],
-      check,
       jobseekerid,
       jobtypeitems,
     );
-  }
-  // else if (i == 2) {
-  //     Profilebottomsheet().profile_bottomsheet3(
-  //       context,
-  //       jobpreference_items(
-  //         "Work Schedule",
-  //         "what are your desired schedules?",
-  //         "Days",
-  //         "Shifts",
-  //       ),
-  //       ["Monday to Friday", "Weekend availability", "Weekend only"],
-  //       [
-  //         "Day shift",
-  //         "Morning shift",
-  //         "Rotational shift",
-  //         "Night shift",
-  //         "Evening shift",
-  //         "Fixed shift",
-  //         "US shift",
-  //         "UK shift",
-  //       ],
-  //     );
-  //   }
-  else if (check == minimumpaytext) {
-    Profilebottomsheet().minimumpay_bottomSheet(
+  } else if (check == workscheduletext) {
+    Profilebottomsheet().profile_bottomsheet3(
       context,
-      jobpreference_items(
-        "Pay",
-        "what is the minimum pay you'll consider in your search?",
-        "Minimum base pay ( ₹ )",
-        "Pay period",
+      qualification_items(workscheduletext, desiredscheduletext, shiftstext),
+      [1, 1],
+      scheduleitems,
+      shiftitems,
+      contentdata,
+      jobseekerid,
+    );
+  } else if (check == minimumpaytext) {
+    Profilebottomsheet().profile_bottomSheet4(
+      context,
+      qualification_items(
+        minimumpayconsidertext,
+        "$minimumpaytext ( $currencysymbol )",
+        payperiodtext,
       ),
-      ["per hour", "per week", "per day", "per month", "per year"],
+      contentdata,
+      [1, 1],
+      check,
+      jobseekerid,
+      payperioditems,
+    );
+  } else if (check == worklocationtext) {
+    Profilebottomsheet().profile_bottomSheet6(
+      context,
+      qualification_items(check, worksettingtext, ""),
+      contentdata,
+      jobseekerid,
+      locationitems,
     );
   }
-  //else if (i == 4) {
-  //     Profilebottomsheet().profile_bottomsheet3(
-  //       context,
-  //       jobpreference_items("Remote settings", "", "Desired work setting", ""),
-  //       ["Remote", "Hybrid work", "In-person", "Temporarily remote"],
-  //       [],
-  //     );
-  //   }
 }
 
 //=========================Show Content Action==============
@@ -417,6 +425,7 @@ profiledetaildelete(
   String jobseekerid,
 ) {
   closeaction(context);
+
   if (check == workexpereiencetext) {
     context.read<Profiledetailcubit>().deleteprofiledetails(
       context,
@@ -452,19 +461,13 @@ profiledetaildelete(
       jobseekerid,
       id,
     );
-  } else if (check == jobtypetext) {
-    context.read<Profiledetailcubit>().deleteprofiledetails(
-      context,
-      deletejobtype,
-      jobseekerid,
-      id,
-    );
   }
 }
 
 //==========================Save Profile data===========
 saveprofiledata(BuildContext context, String check, String jobseekerid, value) {
   closeaction(context);
+
   if (check == profilesetting) {
     context.read<Profiledetailcubit>().updateprofiledetails(
       context,
@@ -520,10 +523,34 @@ saveprofiledata(BuildContext context, String check, String jobseekerid, value) {
   } else if (check == jobtypetext) {
     context.read<Profiledetailcubit>().updateprofiledetails(
       context,
-      insertjobtype,
+      updatejobtype,
       jobseekerid,
-      [jobseeker_idtext, jobtypeapitext],
-      [jobseekerid, value],
+      [jobtypeapitext],
+      [value],
+    );
+  } else if (check == worklocationtext) {
+    context.read<Profiledetailcubit>().updateprofiledetails(
+      context,
+      updateworklocation,
+      jobseekerid,
+      [worklocationapitext],
+      [value],
+    );
+  } else if (check == minimumpaytext) {
+    context.read<Profiledetailcubit>().updateprofiledetails(
+      context,
+      updateminimumpay,
+      jobseekerid,
+      [minimumbasepayapitext, payperiodapitext],
+      value,
+    );
+  } else if (check == workscheduletext) {
+    context.read<Profiledetailcubit>().updateprofiledetails(
+      context,
+      updateschedule,
+      jobseekerid,
+      [scheduleapitext, shiftapitext],
+      value,
     );
   }
 }
@@ -534,6 +561,7 @@ homescreeninitial(
   ScrollController scrollController,
   String searchdata,
 ) {
+  context.read<JobCubit>().emptylist();
   context.read<JobCubit>().loadJobs(searchdata); // Load first batch
 
   scrollController.addListener(() {
@@ -547,8 +575,203 @@ homescreeninitial(
 }
 
 //=======================loginaction===========================
-loginaction(BuildContext context, formKey, String mail, String password) {
+loginaction(
+  BuildContext context,
+  GlobalKey<FormState> formKey,
+  String mail,
+  String password,
+) {
   if (formKey.currentState!.validate()) {
     context.read<LoginCubit>().loginid(context, mail, password);
+  }
+}
+
+//=======================Register Action============================
+registeraction(
+  BuildContext context,
+  String person,
+  RegisterState statecontents,
+) {
+  if (person == jobseekertext) {
+    if (statecontents.formKey1.currentState!.validate() &&
+        statecontents.formKey2.currentState!.validate() &&
+        statecontents.formKey3.currentState!.validate() &&
+        statecontents.formKey4.currentState!.validate() &&
+        statecontents.formKey5.currentState!.validate() &&
+        statecontents.formKey6.currentState!.validate() &&
+        statecontents.formKey15.currentState!.validate() &&
+        statecontents.jobtype.isNotEmpty &&
+        statecontents.schedule.isNotEmpty &&
+        statecontents.shift.isNotEmpty &&
+        statecontents.worklocation.isNotEmpty &&
+        statecontents.jobtitle.isNotEmpty &&
+        statecontents.level.isNotEmpty &&
+        statecontents.skill.isNotEmpty &&
+        statecontents.language.isNotEmpty &&
+        statecontents.desiredjob.isNotEmpty) {
+      context.read<RegisterCubit>().updatedatas(context, person);
+    } else {
+      simplesnackbar(context, fieldrequiredtext);
+    }
+  } else if (person == employertext) {
+    if (statecontents.formKey1.currentState!.validate() &&
+        statecontents.formKey2.currentState!.validate() &&
+        statecontents.formKey3.currentState!.validate() &&
+        statecontents.formKey4.currentState!.validate() &&
+        statecontents.formKey5.currentState!.validate() &&
+        statecontents.formKey6.currentState!.validate() &&
+        statecontents.formKey7.currentState!.validate() &&
+        statecontents.formKey8.currentState!.validate()) {
+      context.read<RegisterCubit>().updatedatas(context, person);
+    }
+  }
+}
+
+//===============================Register page confirm button action===================
+regconfirmbuttonaction(
+  BuildContext context,
+  String person,
+  RegisterState statecontents,
+  int clickvalue,
+) {
+  if (person == jobseekertext) {
+    if (clickvalue > 4 && !statecontents.formKey15.currentState!.validate()) {
+      simplesnackbar(context, fieldrequiredtext.toLowerCase());
+      return false;
+    }
+
+    if (clickvalue > 4 && statecontents.desiredjob.isEmpty) {
+      simplesnackbar(
+        context,
+        addrequiredtext + desiredjobtext.toLowerCase() + yettext,
+      );
+      return false;
+    }
+
+    if (clickvalue > 3 && statecontents.language.isEmpty) {
+      simplesnackbar(
+        context,
+        addrequiredtext + languagestext.toLowerCase() + yettext,
+      );
+      return false;
+    }
+
+    if (clickvalue > 2 && statecontents.skill.isEmpty) {
+      simplesnackbar(
+        context,
+        addrequiredtext + skilltext2.toLowerCase() + yettext,
+      );
+      return false;
+    }
+
+    if (clickvalue > 1 && statecontents.level.isEmpty) {
+      simplesnackbar(
+        context,
+        addrequiredtext + educationtext.toLowerCase() + yettext,
+      );
+      return false;
+    }
+
+    if (clickvalue > 0 && statecontents.jobtitle.isEmpty) {
+      simplesnackbar(
+        context,
+        addrequiredtext + workexpereiencetext.toLowerCase() + yettext,
+      );
+      return false;
+    }
+    if (clickvalue > -1) {
+      if (statecontents.formKey1.currentState!.validate() &&
+          statecontents.formKey2.currentState!.validate() &&
+          statecontents.formKey3.currentState!.validate() &&
+          statecontents.formKey4.currentState!.validate() &&
+          statecontents.formKey5.currentState!.validate() &&
+          statecontents.formKey6.currentState!.validate() &&
+          statecontents.resumecontroller.text.isNotEmpty) {
+        return true;
+      } else if (statecontents.formKey1.currentState!.validate() &&
+          statecontents.formKey2.currentState!.validate() &&
+          statecontents.formKey3.currentState!.validate() &&
+          statecontents.formKey4.currentState!.validate() &&
+          statecontents.formKey5.currentState!.validate() &&
+          statecontents.formKey6.currentState!.validate() &&
+          statecontents.resumecontroller.text.isEmpty) {
+        simplesnackbar(context, noresumemsg);
+        return false;
+      } else {
+        simplesnackbar(context, fieldrequiredtext);
+        return false;
+      }
+    }
+  }
+}
+
+//=====================add button action in register page==============
+addbuttonaction(RegisterState statecontents, String heading) {
+  if (heading == workexpereiencetext) {
+    if (statecontents.jobtitlecontroller.text.isNotEmpty) {
+      statecontents.jobtitle.add(statecontents.jobtitlecontroller.text);
+      statecontents.company.add(statecontents.companycontroller.text);
+      statecontents.jobtitlecontroller.clear();
+      statecontents.companycontroller.clear();
+    } else {
+      statecontents.formKey7.currentState!.validate();
+    }
+  } else if (heading == educationtext) {
+    if (statecontents.levelcontroller.text.isNotEmpty &&
+        statecontents.fieldcontroller.text.isNotEmpty) {
+      statecontents.level.add(statecontents.levelcontroller.text);
+      statecontents.field.add(statecontents.fieldcontroller.text);
+      statecontents.levelcontroller.clear();
+      statecontents.fieldcontroller.clear();
+    } else {
+      statecontents.formKey9.currentState!.validate();
+      statecontents.formKey10.currentState!.validate();
+    }
+  } else if (heading == skilltext2) {
+    if (statecontents.skillcontroller.text.isNotEmpty) {
+      statecontents.skill.add(statecontents.skillcontroller.text);
+      statecontents.expyear.add(statecontents.yearcontroller.text);
+      statecontents.skillcontroller.clear();
+      statecontents.yearcontroller.clear();
+    } else {
+      statecontents.formKey11.currentState!.validate();
+      statecontents.formKey12.currentState!.validate();
+    }
+  } else if (heading == languagetext) {
+    if (statecontents.langcontroller.text.isNotEmpty &&
+        statecontents.proficiencycontroller.text.isNotEmpty) {
+      statecontents.language.add(statecontents.langcontroller.text);
+      statecontents.proficiency.add(statecontents.proficiencycontroller.text);
+      statecontents.langcontroller.clear();
+    } else {
+      statecontents.formKey11.currentState!.validate();
+      statecontents.formKey12.currentState!.validate();
+    }
+  } else if (heading == desiredjobtext) {
+    if (statecontents.desiredjobcontroller.text.isNotEmpty) {
+      statecontents.desiredjob.add(statecontents.desiredjobcontroller.text);
+      statecontents.desiredjobcontroller.clear();
+    } else {
+      statecontents.formKey16.currentState!.validate();
+    }
+  }
+}
+
+//==========================Display data action in register page===========
+displaybuttonaction(RegisterState statecontents, String heading, String item) {
+  if (heading == workexpereiencetext) {
+    statecontents.jobtitle.remove(item.split(" - ")[0]);
+    statecontents.company.remove(item.split(" - ")[1]);
+  } else if (heading == educationtext) {
+    statecontents.level.remove(item.split(" - ")[0]);
+    statecontents.field.remove(item.split(" - ")[1]);
+  } else if (heading == skilltext2) {
+    statecontents.skill.remove(item.split(" - ")[0]);
+    statecontents.expyear.remove(item.split(" - ")[1]);
+  } else if (heading == languagetext) {
+    statecontents.language.remove(item.split(" - ")[0]);
+    statecontents.proficiency.remove(item.split(" - ")[1]);
+  } else if (heading == desiredjobtext) {
+    statecontents.desiredjob.remove(item);
   }
 }

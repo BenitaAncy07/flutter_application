@@ -40,7 +40,19 @@ class _HomeState extends State<Home> {
         } else if (state is JobLoaded) {
           return Column(
             children: [
+              // Expanded(
+              //   child: Row(
+              //     children: [
               searchbarwidget(context),
+
+              // Icon(
+              //   Icons.filter_list_alt,
+              //   color: hexToColor(goldencolor),
+              //   size: iconsize6,
+              // ),
+              //     ],
+              //   ),
+              // ),
               Expanded(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height - 20,
@@ -110,9 +122,12 @@ class _HomeState extends State<Home> {
 
   //============================searchbar widget================================
   Widget searchbarwidget(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: TextField(
+    return Padding(
+      padding: EdgeInsets.all(5),
+      child:
+      //  Row(
+      //   children: [
+      TextField(
         controller: searchcontroller,
         cursorColor: hexToColor(goldencolor),
         style: TextStyle(
@@ -148,15 +163,15 @@ class _HomeState extends State<Home> {
             size: iconsize2,
           ),
           suffixIcon: Padding(
-            padding: EdgeInsets.only(right: 5),
+            padding: EdgeInsets.only(right: 5, top: 2, bottom: 2),
             child: InkWell(
               onTap: () {
                 searchaction(context, searchcontroller.text);
               },
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.06,
+                width: 60,
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(8),
+                padding: EdgeInsets.only(right: 8, left: 8),
                 decoration: BoxDecoration(
                   color: hexToColor(goldencolor),
                   borderRadius: BorderRadius.circular(8),
@@ -182,6 +197,13 @@ class _HomeState extends State<Home> {
           searchaction(context, searchcontroller.text);
         },
       ),
+      // Icon(
+      //   Icons.filter_list_alt,
+      //   color: hexToColor(goldencolor),
+      //   size: iconsize6,
+      // ),
+      //   ],
+      // ),
     );
   }
 
@@ -196,16 +218,6 @@ class _HomeState extends State<Home> {
             savejobaction(context);
           },
           icon: Icon(saveicon, color: hexToColor(goldencolor)),
-        ),
-        Padding(
-          padding: EdgeInsets.only(bottom: 80),
-          child: IconButton(
-            iconSize: iconsize2,
-            onPressed: () {
-              blockaction(context);
-            },
-            icon: Icon(blockicon, color: hexToColor(goldencolor)),
-          ),
         ),
       ],
     );

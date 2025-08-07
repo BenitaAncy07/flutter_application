@@ -8,13 +8,21 @@ String home_appbarheading = 'FIND JOBS FOR YOU',
     profile_appbarheading = "Profile";
 
 //======================Bottombar Headings===============================
-String homelabel = 'Home', jobslabel = 'My jobs', profilelabel = 'Profile';
+String homelabel = 'Home',
+    jobslabel = 'My jobs',
+    profilelabel = 'Profile',
+    dashboardlabel = "Dashboard";
 
 //=====================Snackbar messages====================
 String savedjobmsg = "Saved to My Jobs",
     unsavedjobmsg = "Job Unsaved",
     loginsuccessmsg = "Login Successful",
-    logininvalidmsg = "Invalid login Credential";
+    logininvalidmsg = "Invalid login Credential",
+    noresumemsg = "Resume not uploaded yet",
+    fieldrequiredtext = "Some fields are not filled yet",
+    addrequiredtext = "You haven't added ",
+    yettext = " yet",
+    accountcreatedmsg = "Account created successfully";
 
 //======================Button text=========================
 String siginbuttontext = "Sign in",
@@ -29,11 +37,84 @@ String siginbuttontext = "Sign in",
     deletebuttontext = "Delete",
     yesbuttontext = 'Yes',
     nobuttontext = 'No',
-    undobuttontext = 'Undo';
+    undobuttontext = 'Undo',
+    addbuttontext = "Add",
+    uploadbuttontext = "Upload resume",
+    registerbuttontext = "Sign Up",
+    nextbuttontext = "Confirm";
 
+//==================Textfield label text==============================
 String
-introscreentext = "The world's no. 1 job search site",
-searchhinttext = "Enter job, company, locality or keywords",
+namelabeltext = pleaseentertext + nametext.toLowerCase(),
+emaillabeltext = pleaseentertext + emailtext.toLowerCase(),
+passwordlabeltext = pleaseentertext + passwordtext.toLowerCase(),
+confirmpasswordlabeltext = pleaseentertext + confirmpasswordtext.toLowerCase(),
+companylabeltext = "${pleaseentertext}company name",
+companytypelabeltext = "${pleaseentertext}company type",
+aboutcompanylabeltext = "Write about your company and its vision/mission",
+locationlabeltext = "${pleaseentertext}location",
+phonenolabeltext = pleaseentertext + phonetext.toLowerCase(),
+jobtitlelabeltext = "Please mention your past job position",
+workedcompanylabeltext =
+    "Kindly specify the company in which you held this position",
+leveleducationlabeltext = "Indicate your qualification",
+fieldlabeltext = "Area of specialization",
+skilllabeltext = "Please add your skill",
+expyearlabeltext = "${pleaseentertext}skill experience in years",
+langlabeltext = "Please enter known languages",
+minimumpaylabeltext = "What is the minimum pay you'll consider in your search?",
+desiredjoblabeltext = "What are your desired job title?";
+
+//=====================Textfield hint text=============================
+String searchhinttext = "Enter job, company, locality or keywords",
+    namehinttext = "${exampletext}Rubancy",
+    emailhinttext = "${exampletext}Rubancy@example.com",
+    passwordhinttext = "${exampletext}ABC123@d",
+    companyhinttext = "${exampletext}ABC Private Ltd",
+    companytypehinttext = "${exampletext}IT Services",
+    aboutcompanyhinttext = "",
+    locationhinttext = "${exampletext}Nagercoil, Tamilnadu",
+    phonehinttext = "$exampletext+91 1234567890",
+    jobtitlehinttext = "${exampletext}Software Developer",
+    workedcompanyhinttext = "${exampletext}XYZ Private Ltd",
+    leveleducationhinttext = "${exampletext}Bachelor's degree",
+    fieldeducationhinttext = "${exampletext}Computer science",
+    skillhinttext = "${exampletext}Php",
+    expyearhinttext = "${exampletext}2 years",
+    langhintext = "${exampletext}English",
+    minimumpayhinttext = "${exampletext}3000",
+    desiredjobhinttext = "${exampletext}Senior software developer";
+
+//======================Textfield validator text========================
+String
+passwordnomatchtext = "Confirm password did not match",
+strongpasswordtext =
+    'Password must be at least 8 characters and include uppercase, lowercase, number, and special character',
+requiredemailtext = 'Email is required',
+requiredfieldtext = 'This field is required',
+validemailtext = 'Enter a valid email address';
+
+//==================Symbols as text===========================
+String bulletsymbol = "➤ ", currencysymbol = "₹";
+
+//=================Crucial decorative text========================
+String introscreentext = "The world's no. 1 job search site",
+    registersubtext = "Create your account",
+    exitheading = "Exit?",
+    exitcontent = 'Do you really want to leave this page?',
+    nointernet_heading = "No internet connection",
+    nointernet_content = "It looks like you're offline. Check your connection",
+    failedmsgtext = 'Something went wrong',
+    loadingtext = "Loading....",
+    employersnoseetext = "Not shown to employers",
+    pleaseentertext = "Please enter your ",
+    exampletext = "e.g. ";
+
+//==================who======================
+String employertext = "Employer", jobseekertext = "Jobseeker";
+
+//===============================
+String
 profileinsighttext = 'Profile insights',
 skilltext = 'Skills',
 jobdetailtext = 'Job details',
@@ -59,6 +140,7 @@ profilesettingsubhead2 =
     "Only employers you've applied to can see your profile. Other employers can't find your profile and contact you about jobs",
 replacefiletext = "Replace file",
 deletefiletext = "Delete",
+downloadfiletext = "Download",
 resumetext = "Resume",
 aboutyoutext = "Improve your job matches",
 qualificationtext = "Qualifications",
@@ -78,40 +160,39 @@ notinterestedtext = "No longer interested",
 workexpereiencetext = "Most recent work experience",
 educationtext = "Education",
 languagestext = "Languages",
-jobtitlestext = "Job titles",
+jobtitlestext = "Desired job titles",
 workscheduletext = "Work schedule",
 minimumpaytext = "Minimum base pay",
 worklocationtext = "Work location",
-exitheading = "Exit?",
-exitcontent = 'Do you really want to leave this page?',
-nointernet_heading = "No internet connection",
-nointernet_content = "It looks like you're offline. Check your connection",
-employertext = "Employer",
-jobseekertext = "Jobseeker",
-failedmsgtext = 'Something went wrong',
-loadingtext = "Loading....",
 searchtext = "Search",
-emailtext = "Email",
-passwordtext = "Password",
 logintext = " Login",
-requiredemailtext = 'Email is required',
-requiredfieldtext = 'Field is required',
-validemailtext = 'Enter a valid email address',
-companytypetext = "Company Based on : ",
-aboutcompanytext = "About Company : ",
 datetext = "Added on ",
-companytext = "Company",
-jobtitletext = "Job title",
-leveleducationtext = "Education level",
-fieldstudytext = "Field",
-skilltext2 = "Skill",
-expyeartext = "Years of experience",
-languagetext = "Language",
-proficiencytext = "Proficiency",
 desiredjobtext = "What are your desired job titles?",
-desiredjobtypetext = "what are your desired job types?";
+desiredjobtypetext = "what are your desired job types?",
+worksettingtext = "Desired work setting",
+minimumpayconsidertext =
+    "What is the minimum pay you'll consider in your search?",
+desiredscheduletext = "What are your desired schedule?",
+shiftstext = "Shifts",
+payperiodtext = "Pay Period";
 
-String bulletsymbol = "➤ ", currencysymbol = "₹";
+String nametext = "Name",
+    emailtext = "Email",
+    passwordtext = "Password",
+    confirmpasswordtext = "Confirm Password",
+    phonetext = "Phone no",
+    locationtext = "Location",
+    companytext = "Company",
+    companytypetext = "Company Based on : ",
+    aboutcompanytext = "About Company : ",
+    companydetailtext = "Company Detail",
+    jobtitletext = "Job title",
+    leveleducationtext = "Education level",
+    fieldstudytext = "Field of Study",
+    skilltext2 = "Skill",
+    expyeartext = "Years of experience",
+    languagetext = "Language",
+    proficiencytext = "Proficiency";
 
 List<String> MyJoboptions = [saved, applied, archived],
     MyJobnocontent_text = [
@@ -123,21 +204,4 @@ List<String> MyJoboptions = [saved, applied, archived],
       "Jobs you save appear here",
       "Jobs you applied appear here",
       "Applications you archive appear here",
-    ],
-    languageproficiencyitems = [
-      "Beginner",
-      "Intermediate",
-      "Expert",
-      "Fluent",
-      "Native",
-    ],
-    jobtypeitems = [
-      "Full-time",
-      "Permanent",
-      "Fresher",
-      "Part-time",
-      "Internship",
-      "Contractual/Temporary",
-      "Freelance",
-      "Volunteer",
     ];

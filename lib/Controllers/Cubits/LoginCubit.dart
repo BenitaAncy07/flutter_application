@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/RegisterCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Utilities/DatabaseActions.dart';
 import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
@@ -53,13 +54,14 @@ class LoginCubit extends Cubit<LoginState> {
 
       simplesnackbar(context, loginsuccessmsg);
 
-      emit(LoginState(state.value, state.person, a[0]));
-      context.read<Profiledetailcubit>().loadprofiledetails(context, a[0]);
+      emit(LoginState(state.value, state.person, a));
+      context.read<Profiledetailcubit>().loadprofiledetails(context, a);
       context.read<PageCubit>().nextPage(homeScreen);
     } else {
       simplesnackbar(context, logininvalidmsg);
     }
 
     closeaction(context);
+    context.read<RegisterCubit>().reset();
   }
 }
