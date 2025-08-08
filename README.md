@@ -27,16 +27,16 @@ This project involves site for searching a job for jobseeker and also site for a
 
 ## **Project Features:**
 
-    - [A Flutter application which supports Android, iOS and Web.]
-    - [Includes both Employer and Jobseeker module.]
-    - [Build with MVVC architecture.]
-    - [Data stored and fetched from MySql.]
-    - [Integrated Rest Api.]
-    - [Used Flutter Bloc for State Management.]
-    - [Supports Adaptive themes.]
-    - [Integrated with Easy loading.]
-    - [Auto Sign until Sign out.]
-    - [Screen size adaptability.]
+ * A Flutter application which supports Android, iOS and Web.
+ * Includes both Employer and Jobseeker module.
+ * Build with MVVC architecture.
+ * Data stored and fetched from MySql.
+ * Integrated Rest Api.
+ * Used Flutter Bloc for State Management.
+ * Supports Adaptive themes.
+ * Integrated with Easy loading.
+ * Auto Sign until Sign out.
+ * Screen size adaptability.
 
 <!-- ## **About Project:**
 
