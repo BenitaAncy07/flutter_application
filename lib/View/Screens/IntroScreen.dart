@@ -1,14 +1,15 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/Controllers/Cubits/LoginCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/Actions.dart';
 import 'package:flutter_application/Controllers/Utilities/Hexconversion.dart';
 import 'package:flutter_application/Controllers/Constants/Appconstants.dart';
 import 'package:flutter_application/Models/CubitModels/PageState.dart';
+import 'package:flutter_application/View/Helpers/ButtonContents.dart';
 import 'package:flutter_application/View/Helpers/Colorcontents.dart';
 import 'package:flutter_application/View/Helpers/Fontcontents.dart';
-import 'package:flutter_application/View/Helpers/Imagecontents.dart';
 import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/View/Typography/Appbar.dart';
+import 'package:flutter_application/View/Typography/ButtonStyles.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class Introscreen extends StatelessWidget {
@@ -20,28 +21,7 @@ class Introscreen extends StatelessWidget {
       builder: (context, state) {
         return Column(
           children: [
-            Container(color: hexToColor(goldencolor), height: 10),
-            Padding(
-              padding: EdgeInsets.only(top: 40, bottom: 40),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(logo, width: 100, height: 100),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 30),
-                    child: Text(
-                      introscreentext,
-                      style: TextStyle(
-                        fontSize: textsize6,
-                        color: hexToColor(goldencolor),
-                        fontFamily: headingfont,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            appbar1(context, introscreentext),
             Padding(
               padding: EdgeInsets.only(left: 10, right: 10),
               child: ConstrainedBox(
@@ -75,8 +55,22 @@ class Introscreen extends StatelessWidget {
                                 child: Stack(
                                   children: [
                                     Container(
-                                      width: 150,
-                                      height: 150,
+                                      width:
+                                          MediaQuery.of(context).size.width <
+                                                  400
+                                              ? MediaQuery.of(
+                                                    context,
+                                                  ).size.width /
+                                                  2.8
+                                              : 150,
+                                      height:
+                                          MediaQuery.of(context).size.width <
+                                                  400
+                                              ? MediaQuery.of(
+                                                    context,
+                                                  ).size.width /
+                                                  2.6
+                                              : 150,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
@@ -130,86 +124,23 @@ class Introscreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          signinaction(context);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
-                          decoration: BoxDecoration(
-                            color: hexToColor(goldencolor),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-
-                          child: Text(
-                            siginbuttontext,
-                            style: TextStyle(
-                              fontSize: buttontextsize1,
-                              color:
-                                  AdaptiveTheme.of(context).mode ==
-                                          AdaptiveThemeMode.light
-                                      ? black
-                                      : lighttheme,
-                              fontFamily: headingfont,
-                            ),
-                          ),
-                        ),
-                      ),
+                      buttonstyle1(context, coloredbutton, siginbuttontext, (
+                        a,
+                      ) {
+                        signinaction(context);
+                      }),
 
                       Padding(
                         padding: EdgeInsets.only(bottom: 50, top: 20),
-                        child: InkWell(
-                          onTap: () {
+                        child: buttonstyle1(
+                          context,
+                          onlyborderbutton,
+                          createaccountbuttontext,
+                          (a) {
                             createaccountaction(context);
                           },
-                          child: Container(
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: hexToColor(goldencolor),
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-
-                            child: Text(
-                              createaccountbuttontext,
-                              style: TextStyle(
-                                fontSize: buttontextsize1,
-                                color:
-                                    AdaptiveTheme.of(context).mode ==
-                                            AdaptiveThemeMode.light
-                                        ? black
-                                        : lighttheme,
-                                fontFamily: headingfont,
-                              ),
-                            ),
-                          ),
                         ),
                       ),
-
-                      // InkWell(
-                      //   onTap: () {
-                      //     skipaction(context);
-                      //   },
-                      //   child: Container(
-                      //     alignment: Alignment.center,
-                      //     width: MediaQuery.of(context).size.width * 0.85,
-                      //     padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
-                      //     child: Text(
-                      //       skipbuttontext,
-                      //       style: TextStyle(
-                      //         fontSize: buttontextsize1,
-                      //         color: hexToColor(goldencolor),
-                      //         fontFamily: headingfont,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

@@ -7,6 +7,7 @@ import 'package:flutter_application/Controllers/Cubits/MyjobCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/PageCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';
+import 'package:flutter_application/Controllers/Cubits/RegisterCubit.dart';
 import 'package:flutter_application/View/Screens/Splashscreen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,13 +16,15 @@ void main() {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => PageCubit()),
-        BlocProvider(create: (context) => BottombarCubit()),
-        BlocProvider(create: (context) => MyjobCubit()),
-        BlocProvider(create: (context) => ProfilesettingCubit()),
         BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) => RegisterCubit()),
+        BlocProvider(create: (context) => BottombarCubit()),
+        BlocProvider(create: (context) => FilterCubit()),
         BlocProvider(create: (context) => JobCubit()),
         BlocProvider(create: (context) => Jobdetailcubit()),
+        BlocProvider(create: (context) => MyjobCubit()),
         BlocProvider(create: (context) => Profiledetailcubit()),
+        BlocProvider(create: (context) => ProfilesettingCubit()),
       ],
       child: const MyApp(),
     ),

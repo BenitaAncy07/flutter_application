@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/Controllers/Constants/ApiConstants.dart';
 import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
-import 'package:flutter_application/Controllers/Utilities/Actions.dart';
+import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/DatabaseActions.dart';
 import 'package:flutter_application/Models/ApiModels.dart';
 import 'package:flutter_application/Models/CubitModels/PageState.dart';
 import 'package:flutter_application/Models/CubitModels/ProfileState.dart';
-import 'package:flutter_application/View/Typography/Loading.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilesettingCubit extends Cubit<ProfileState> {
@@ -72,17 +71,7 @@ class Profiledetailcubit extends Cubit<Profiledetailstate> {
         jobseekerid,
         jobseekeridtext,
       );
-      if (jsonList != null) {
-        List<profiledatamodel> jobs =
-            (jsonList as List)
-                .map((json) => profiledatamodel.fromJson(json))
-                .toList();
-
-        emit(showdetail(jobseekerid, jobs[0]));
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<ProfilesettingCubit>().indexchange(jobs[0].openprofile);
-        });
-      }
+      dataload(jsonList, context, jobseekerid);
     } catch (e) {
       print(e);
       emit(profiledetailError(failedmsgtext));
@@ -98,7 +87,7 @@ class Profiledetailcubit extends Cubit<Profiledetailstate> {
     List<String> changevalue,
   ) async {
     try {
-      //  emit(profiledetailLoading());
+      emit(profiledetailLoading());
 
       var jsonList = await Databaseactions().updatedata(
         check,
@@ -107,20 +96,7 @@ class Profiledetailcubit extends Cubit<Profiledetailstate> {
         changevalue,
         jobseekerid,
       );
-      if (jsonList != null) {
-        List<profiledatamodel> jobs =
-            (jsonList as List)
-                .map((json) => profiledatamodel.fromJson(json))
-                .toList();
-
-        emit(showdetail(jobseekerid, jobs[0]));
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<ProfilesettingCubit>().indexchange(jobs[0].openprofile);
-        });
-      } else {
-        emit(profiledetailError(failedmsgtext));
-      }
+      dataload(jsonList, context, jobseekerid);
     } catch (e) {
       print(e);
       emit(profiledetailError(failedmsgtext));
@@ -138,23 +114,50 @@ class Profiledetailcubit extends Cubit<Profiledetailstate> {
       //  emit(profiledetailLoading());
 
       var jsonList = await Databaseactions().deletedata(check, id, jobseekerid);
-      if (jsonList != null) {
-        List<profiledatamodel> jobs =
-            (jsonList as List)
-                .map((json) => profiledatamodel.fromJson(json))
-                .toList();
-
-        emit(showdetail(jobseekerid, jobs[0]));
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          context.read<ProfilesettingCubit>().indexchange(jobs[0].openprofile);
-        });
-      } else {
-        emit(profiledetailError(failedmsgtext));
-      }
+      dataload(jsonList, context, jobseekerid);
     } catch (e) {
       print(e);
       emit(profiledetailError(failedmsgtext));
+    }
+  }
+
+  //==================file upload=======================
+  Future<void> fileupload(
+    BuildContext context,
+    fileBytes,
+    String filename,
+    String jobseekerid,
+  ) async {
+    try {
+      //  emit(profiledetailLoading());
+
+      var jsonList = await Databaseactions().uploadfile(
+        fileBytes,
+        jobseekerid,
+        context,
+        [resumeapitext],
+        [filename],
+      );
+      dataload(jsonList, context, jobseekerid);
+    } catch (e) {
+      print(e);
+      emit(profiledetailError(failedmsgtext));
+    }
+  }
+
+  //========================data load=================
+  dataload(jsonList, BuildContext context, String jobseekerid) {
+    if (jsonList != null) {
+      List<profiledatamodel> jobs =
+          (jsonList as List)
+              .map((json) => profiledatamodel.fromJson(json))
+              .toList();
+
+      emit(showdetail(jobseekerid, jobs[0]));
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<ProfilesettingCubit>().indexchange(jobs[0].openprofile);
+      });
     }
   }
 }

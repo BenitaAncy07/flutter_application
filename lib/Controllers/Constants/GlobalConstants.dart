@@ -1,0 +1,31 @@
+List<String>
+languageproficiencyitems = [
+  "Beginner",
+  "Intermediate",
+  "Expert",
+  "Fluent",
+  "Native",
+],
+jobtypeitems = [
+  "Full-time",
+  "Permanent",
+  "Fresher",
+  "Part-time",
+  "Internship",
+  "Contractual/Temporary",
+  "Freelance",
+  "Volunteer",
+],
+locationitems = ["Remote", "Hybrid work", "In-person", "Temporarily remote"],
+payperioditems = ["per hour", "per week", "per day", "per month", "per year"],
+shiftitems = [
+  "Day shift",
+  "Morning shift",
+  "Rotational shift",
+  "Night shift",
+  "Evening shift",
+  "Fixed shift",
+  "US shift",
+  "UK shift",
+],
+scheduleitems = ["Monday to Friday", "Weekend availability", "Weekend only"];

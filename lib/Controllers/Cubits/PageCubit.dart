@@ -3,10 +3,10 @@ import 'package:flutter_application/Models/CubitModels/PageState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PageCubit extends Cubit<PageState> {
-  PageCubit() : super(PageState({"page": introScreen}, offlinetext));
+  PageCubit() : super(PageState({pagetext: introScreen}, onlinetext));
 
   void nextPage(String newPage) {
-    emit(PageState({"page": newPage}, state.internetstatus));
+    emit(PageState({pagetext: newPage}, state.internetstatus));
   }
 
   void internetcheck(String value) {

@@ -3,6 +3,7 @@ import 'package:flutter_application/Controllers/Utilities/DatabaseActions.dart';
 import 'package:flutter_application/Models/ApiModels.dart';
 import 'package:flutter_application/Models/CubitModels/HomeState.dart';
 import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/Models/CubitModels/PageState.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class JobCubit extends Cubit<JobState> {
@@ -31,6 +32,8 @@ class JobCubit extends Cubit<JobState> {
         _allJobs.addAll(jobs);
         _offset += _limit;
         emit(JobLoaded(List.from(_allJobs), jobs.length == _limit));
+      } else {
+        emptylist();
       }
     } catch (e) {
       print(e);
@@ -43,5 +46,20 @@ class JobCubit extends Cubit<JobState> {
     _allJobs = [];
     _offset = 0;
     emit(JobLoaded(_allJobs, _offset == 0));
+  }
+}
+
+class FilterCubit extends Cubit<FilterState> {
+  FilterCubit() : super(FilterState([], [], [], [], []));
+  void updatedatas(profiledatamodel datas) {
+    emit(
+      FilterState(
+        datas.desired_jobtitle.split("#"),
+        datas.jobtype.split("#"),
+        datas.schedule.split("#"),
+        datas.shift.split("#"),
+        datas.worklocation.split("#"),
+      ),
+    );
   }
 }
