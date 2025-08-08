@@ -102,49 +102,19 @@ class RegisterState {
       worklocation = [];
 
   Uint8List? resumepdf;
-  // RegisterState(
-  //   this.aboutcompanycontroller,
-  //   this.box10Focus,s
-  //   this.box11Focus,
-  //   this.box12Focus,
-  //   this.box13Focus,
-  //   this.box15Focus,
-  //   this.box16Focus,
-  //   this.box1Focus,
-  //   this.box2Focus,
-  //   this.box3Focus,
-  //   this.box4Focus,
-  //   this.box5Focus,
-  //   this.box6Focus,
-  //   this.box7Focus,
-  //   this.box8Focus,
-  //   this.box9Focus,
-  //   this.companycontroller,
-  //   this.companytypecontroller,
-  //   this.confirmpasswordcontroller,
-  //   this.desiredjob,
-  //   this.desiredjobcontroller,
-  //   this.educate,
-  //   this.fieldcontroller,
-  //   this.jobtitlecontroller,
-  //   this.jobtype,
-  //   this.lang,
-  //   this.langcontroller,
-  //   this.levelcontroller,
-  //   this.locationcontroller,
-  //   this.mailcontroller,
-  //   this.namecontroller,
-  //   this.passwordcontroller,
-  //   this.paycontroller,
-  //   this.payperiodcontroller,
-  //   this.phonecontroller,
-  //   this.proficiencycontroller,
-  //   this.schedule,
-  //   this.shift,
-  //   this.skill,
-  //   this.skillcontroller,
-  //   this.workexp,
-  //   this.worklocation,
-  //   this.yearcontroller,
-  // );
+}
+
+class FilterState {
+  List<String> desiredjob = [],
+      jobtype = [],
+      schedule = [],
+      shift = [],
+      worklocation = [];
+  FilterState(
+    this.desiredjob,
+    this.jobtype,
+    this.schedule,
+    this.shift,
+    this.worklocation,
+  );
 }

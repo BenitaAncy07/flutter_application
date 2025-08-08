@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable, non_constant_identifier_names
-import 'package:file_picker/file_picker.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/Material.dart';
 import 'package:flutter_application/Controllers/Cubits/ProfileCubit.dart';

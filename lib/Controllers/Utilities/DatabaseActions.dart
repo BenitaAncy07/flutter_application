@@ -60,7 +60,7 @@ class Databaseactions {
     } catch (e) {
       print(e);
 
-      return "";
+      return null;
     }
   }
 

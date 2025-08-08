@@ -60,4 +60,5 @@ IconData lighticon = Icons.light_mode_outlined,
     addicon = Icons.add,
     uploadicon = Icons.upload,
     backbuttonicon = Icons.arrow_back_ios,
-    nointerneticon = Icons.wifi_off;
+    nointerneticon = Icons.wifi_off,
+    filtericon = Icons.multiple_stop_outlined;

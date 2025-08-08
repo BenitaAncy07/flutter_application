@@ -1,4 +1,4 @@
-String url = "http://localhost/Joblist_flutter/";
+String url = "";
 String resumeurl = "Resumes/", apiurl = "APi/MobileApp.php";
 
 String getalljobs = "getalljobs",

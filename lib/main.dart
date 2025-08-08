@@ -15,15 +15,16 @@ void main() {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => RegisterCubit()),
         BlocProvider(create: (context) => PageCubit()),
-        BlocProvider(create: (context) => BottombarCubit()),
-        BlocProvider(create: (context) => MyjobCubit()),
-        BlocProvider(create: (context) => ProfilesettingCubit()),
         BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) => RegisterCubit()),
+        BlocProvider(create: (context) => BottombarCubit()),
+        BlocProvider(create: (context) => FilterCubit()),
         BlocProvider(create: (context) => JobCubit()),
         BlocProvider(create: (context) => Jobdetailcubit()),
+        BlocProvider(create: (context) => MyjobCubit()),
         BlocProvider(create: (context) => Profiledetailcubit()),
+        BlocProvider(create: (context) => ProfilesettingCubit()),
       ],
       child: const MyApp(),
     ),

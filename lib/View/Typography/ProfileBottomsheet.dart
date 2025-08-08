@@ -287,8 +287,8 @@ class Profilebottomsheet {
     String jobseekerid,
     List<String> dropdownitems,
   ) {
-    final _formKey = GlobalKey<FormState>();
-    ;
+    final formKey = GlobalKey<FormState>();
+
     FocusNode box1Focus = FocusNode(), box2Focus = FocusNode();
     TextEditingController textbox1controller = TextEditingController(
       text: heading == minimumpaytext ? contents[0].split(" ")[1] : "",
@@ -370,7 +370,7 @@ class Profilebottomsheet {
                     textwidget(context, item1.textbox1, starrequired[0]),
                     textboxwidget(
                       context,
-                      _formKey,
+                      formKey,
                       textbox1controller,
                       box1Focus,
                       starrequired[0],
@@ -385,7 +385,6 @@ class Profilebottomsheet {
                       },
                     ),
                     textwidget(context, item1.textbox2, starrequired[1]),
-
                     dropdownwidget(
                       context,
                       dropdownitems,
@@ -396,7 +395,7 @@ class Profilebottomsheet {
                 ),
               ),
               savebuttonwidget(context, (a) {
-                if (_formKey.currentState!.validate()) {
+                if (formKey.currentState!.validate()) {
                   saveprofiledata(context, heading, jobseekerid, [
                     textbox1controller.text,
                     textbox2controller.text,

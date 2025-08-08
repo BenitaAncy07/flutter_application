@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/Controllers/Constants/ApiConstants.dart';
 import 'package:flutter_application/Controllers/Constants/UIconstants.dart';
+import 'package:flutter_application/Controllers/Cubits/Pagination/HomeCubit.dart';
 import 'package:flutter_application/Controllers/Utilities/DatabaseActions.dart';
 import 'package:flutter_application/Models/ApiModels.dart';
 import 'package:flutter_application/Models/CubitModels/PageState.dart';
@@ -153,6 +154,7 @@ class Profiledetailcubit extends Cubit<Profiledetailstate> {
               .toList();
 
       emit(showdetail(jobseekerid, jobs[0]));
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.read<ProfilesettingCubit>().indexchange(jobs[0].openprofile);
       });
